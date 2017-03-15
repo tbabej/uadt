@@ -60,13 +60,36 @@ def main(arguments):
 
     # Extract features from selected files
     raw_data = []
+    failed = []
     for counter, path in enumerate(paths[start:end]):
-        print '[{1}/{2}] Processing: {0}'.format(path,
-                                                 start+counter+1, files_count)
+        path_index = start + counter + 1
+        try:
+            print('[{1}/{2}] Processing: {0}'
+                  .format(path, path_index, files_count))
 
-        f = Flow(path)
-        raw_data.append(f.features)
-        del f
+            f = Flow(path)
+            raw_data.append(f.features)
+            del f
+        except Exception:
+            print('Processing failed')
+            failed.append((path_index, path))
+
+    # Unfortunatelly, trollius raises undeterministic errors
+    # Repeat until all files have been succesfully processed
+    while failed:
+        failed_again = []
+        for path_index, path in failed:
+            try:
+                print('[{1}/{2}] Processing: {0}'
+                      .format(path, path_index, files_count))
+
+                f = Flow(path)
+                raw_data.append(f.features)
+                del f
+            except Exception:
+                print('Processing failed')
+                failed_again.append((path_index, path))
+        failed = failed_again
 
     # Determining filename can be complicated
     directory_name = os.path.basename(arguments['<directory>'])
