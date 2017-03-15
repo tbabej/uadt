@@ -30,9 +30,9 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
         packet_data = {
             'size': int(packet.captured_length),
             'timestamp': float(packet.sniff_timestamp),
-            'ttl': int(packet.ip.ttl),
-            'direction': 'forward' if packet.ip.src == LOCAL_IP
-                         else 'backward'
+            'ttl': int(packet.ip.ttl if 'ip' in dir(packet) else 0),
+            'direction': ('forward' if packet.ip.src == LOCAL_IP
+                         else 'backward') if 'ip' in dir(packet) else 'forward'
         }
         return packet_data
 
