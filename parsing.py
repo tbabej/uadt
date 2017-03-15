@@ -34,6 +34,20 @@ class Flow(object):
         packet_data = [self.parse_packet(p) for p in self.packets]
         self.data = pandas.DataFrame(packet_data)
 
+    def generate_features(self):
+        # Dynamically find all features
+        feature_method_names = [k for k in self.__class__.__dict__.keys()
+                                if k.startswith('feature_')]
+
+        # Generate a data dict with results of feature methods
+        feature_data = {}
+        for method_name in feature_method_names:
+            method = getattr(self, method_name)
+            key = method_name.split('feature_')[1]
+            feature_data[key] = method()
+
+        return feature_data
+
     @property
     def forward_packets(self):
         return self.data[self.data['direction'] == 'forward']
@@ -54,19 +68,29 @@ class Flow(object):
         """
         return self.forward_packets['size'].sum()
 
-    def generate_features(self):
-        # Dynamically find all features
-        feature_method_names = [k for k in self.__class__.__dict__.keys()
-                                if k.startswith('feature_')]
+    def feature_f_size_min(self):
+        """
+        Returns the size of the smallest forward packet.
+        """
+        return self.forward_packets['size'].min()
 
-        # Generate a data dict with results of feature methods
-        feature_data = {}
-        for method_name in feature_method_names:
-            method = getattr(self, method_name)
-            key = method_name.split('feature_')[1]
-            feature_data[key] = method()
+    def feature_f_size_max(self):
+        """
+        Returns the size of the biggest forward packet.
+        """
+        return self.forward_packets['size'].max()
 
-        return feature_data
+    def feature_f_size_mean(self):
+        """
+        Returns the mean size of the forward packets.
+        """
+        return self.forward_packets['size'].mean()
+
+    def feature_f_size_std(self):
+        """
+        Returns the mean size of the forward packets.
+        """
+        return self.forward_packets['size'].std()
 
 f = Flow(filename)
 print(f.generate_features())
