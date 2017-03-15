@@ -55,7 +55,7 @@ class Theater(LoggerMixin):
         scenario = self.get_plugin(arguments['<scenario>'])()
 
         self.info("Executing scenario: {0}".format(scenario.identifier))
-        scenario.run()
+        scenario.execute()
 
 
 def main():
