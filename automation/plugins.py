@@ -42,6 +42,8 @@ class Plugin(LoggerMixin):
 
         args = shlex.split("tshark -l -n -T pdml -i wlp4s0 -w {0}".format(filename))
 
+        self.debug("Capturing event '{0}' to file '{1}'".format(name, filename))
+
         with open(os.devnull, 'w') as f:
             p = subprocess.Popen(args, stdout=f, stderr=f)
             yield
