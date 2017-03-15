@@ -1,5 +1,7 @@
 from sklearn import svm, model_selection, preprocessing
 import pandas
+import numpy
+
 
 class Machine(object):
 
@@ -47,20 +49,28 @@ class Machine(object):
         C_candidates = [2.0**(2*p-1) for p in range(-2, 9)]
         gamma_candidates = [2.0**(2*p-1) for p in range(-8, 3)]
 
-        results = []
+        rates = []
         for C in C_candidates:
             for gamma in gamma_candidates:
-                print "Testing C: {0}, gamma: {1}".format(C, gamma)
-                classifier = svm.SVC(C=C, gamma=gamma, decision_function_shape='ovo')
-                model = classifier.fit(self.X_train, self.y_train)
-                prediction = model.predict(self.X_test)
-                compare_vector =  prediction - self.y_test
+                fold_success_rates = []
+                five_fold = model_selection.KFold(n_splits=5)
 
-                rate = 100*len([p for p in compare_vector if p == 0])/float(len(compare_vector))
-                results.append((rate, C, gamma))
-                print rate, '% success'
+                for fold_train, fold_test in five_fold.split(self.X_train, self.y_train):
+                    X_train = self.X_train[fold_train]
+                    X_test  = self.X_train[fold_test]
+                    y_train = self.y_train[fold_train]
+                    y_test  = self.y_train[fold_test]
 
-        _, self.C, self.gamma = max(results)
+                    classifier = svm.SVC(C=C, gamma=gamma, decision_function_shape='ovo')
+                    model = classifier.fit(X_train, y_train)
+                    rate = model.score(X_test, y_test)
+
+                    fold_success_rates.append(rate)
+
+                success_rate = numpy.average(fold_success_rates)
+                rates.append((success_rate, C, gamma))
+
+        _, self.C, self.gamma = max(rates)
 
 
 machine = Machine("dataset1000.csv", train_size=0.7)
