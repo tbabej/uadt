@@ -145,3 +145,39 @@ class BackwardFeatures(object):
         Returns the std of inter time difference among backward packets.
         """
         return self.backward_packets['timeshift'].std()
+
+
+class GlobalFeatures(object):
+    """
+    Provides implementation of features derived from all packets.
+    """
+
+    def feature_t_num(self):
+        """
+        Returns the number of packets.
+        """
+        return len(self.data)
+
+    def feature_t_size_min(self):
+        """
+        Returns the size of the smallest packet.
+        """
+        return self.data['size'].min()
+
+    def feature_t_size_max(self):
+        """
+        Returns the size of the biggest packet.
+        """
+        return self.data['size'].max()
+
+    def feature_t_size_mean(self):
+        """
+        Returns the mean of size of all the packets.
+        """
+        return self.data['size'].mean()
+
+    def feature_t_size_var(self):
+        """
+        Returns the variance of size of all the packets.
+        """
+        return self.data['size'].var()

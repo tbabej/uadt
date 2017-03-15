@@ -3,13 +3,13 @@ import pyshark
 import pandas
 import pprint
 
-from features import ForwardFeatures, BackwardFeatures
+from features import ForwardFeatures, BackwardFeatures, GlobalFeatures
 from constants import CLASSES
 
 filename = 'data/L_cyber_ff_09-17__11_37_53.pcap.TCP_10-0-0-9_59515_212-179-180-110_443.pcap'
 
 
-class Flow(ForwardFeatures, BackwardFeatures):
+class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
     """
     Represents one captured session flow, which should be classified.
     Generates necessary features that will be used as inputs during classification.
