@@ -81,7 +81,7 @@ class Machine(object):
                     y_train = self.y_train[fold_train]
                     y_test  = self.y_train[fold_test]
 
-                    classifier = svm.SVC(C=C, gamma=gamma, decision_function_shape='ovo')
+                    classifier = svm.SVC(C=C, gamma=gamma, decision_function_shape='ovr')
                     model = classifier.fit(X_train, y_train)
                     rate = model.score(X_test, y_test)
 
@@ -97,7 +97,7 @@ class Machine(object):
         Evaluates the SVM on the training data set.
         """
 
-        classifier = svm.SVC(C=self.C, gamma=self.gamma, decision_function_shape='ovo')
+        classifier = svm.SVC(C=self.C, gamma=self.gamma, decision_function_shape='ovr')
         model = classifier.fit(self.X_train, self.y_train)
         rate = model.score(self.X_test, self.y_test)
 
