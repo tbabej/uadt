@@ -46,13 +46,19 @@ class Machine(object):
         X = data.drop('class', 1)
         y = data['class']
 
+        # Convert to numpy arrays and scale inputs
+
+        # Scaling has to be done before the train/test split to make sure
+        # both test and train sets are scaled in the same manner
+        X = self.scale_array(X.as_matrix())
+        y = y.as_matrix()
+
         splitted = model_selection.train_test_split(X, y, train_size=self.train_size)
 
-        # Convert to numpy arrays and scale inputs to [0,1] range
-        self.X_train = self.scale_array(splitted[0].as_matrix())
-        self.X_test  = self.scale_array(splitted[1].as_matrix())
-        self.y_train = splitted[2].as_matrix()
-        self.y_test  = splitted[3].as_matrix()
+        self.X_train = splitted[0]
+        self.X_test  = splitted[1]
+        self.y_train = splitted[2]
+        self.y_test  = splitted[3]
 
     @staticmethod
     def scale_array(array):
