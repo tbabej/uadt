@@ -9,7 +9,6 @@ CURRENT_MARKS = 28
 
 def split_file(marks_filename):
     pcap_filename = marks_filename.split('.')[0] + '.pcap'
-    time_pcap_suffix = '_'.join(pcap_filename.split('_')[1:])
 
     print("Processing {}".format(pcap_filename))
 
