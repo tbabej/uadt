@@ -19,6 +19,7 @@ $ python svm.py data1000.csv -C 512 --gamma 0.5
 
 from docopt import docopt
 from sklearn import svm, model_selection, preprocessing
+from joblib import Parallel, delayed
 import pandas
 import numpy
 
@@ -61,6 +62,30 @@ class Machine(object):
         scaler = preprocessing.StandardScaler()
         return scaler.fit_transform(array)
 
+    def test_parameters(self, C, gamma):
+        """
+        Performs a 5-Fold cross validation of the given parameters on the
+        training set.
+        """
+
+        fold_success_rates = []
+        five_fold = model_selection.KFold(n_splits=5)
+
+        for fold_train, fold_test in five_fold.split(self.X_train, self.y_train):
+            X_train = self.X_train[fold_train]
+            X_test  = self.X_train[fold_test]
+            y_train = self.y_train[fold_train]
+            y_test  = self.y_train[fold_test]
+
+            classifier = svm.SVC(C=C, gamma=gamma, decision_function_shape='ovr')
+            model = classifier.fit(X_train, y_train)
+            rate = model.score(X_test, y_test)
+
+            fold_success_rates.append(rate)
+
+        success_rate = numpy.average(fold_success_rates)
+        return (success_rate, C, gamma)
+
     def optimize_paramters(self):
         """
         Optimizes C and gamma parameters.
@@ -69,26 +94,9 @@ class Machine(object):
         C_candidates = [2.0**(2*p-1) for p in range(-2, 9)]
         gamma_candidates = [2.0**(2*p-1) for p in range(-8, 3)]
 
-        rates = []
-        for C in C_candidates:
-            for gamma in gamma_candidates:
-                fold_success_rates = []
-                five_fold = model_selection.KFold(n_splits=5)
-
-                for fold_train, fold_test in five_fold.split(self.X_train, self.y_train):
-                    X_train = self.X_train[fold_train]
-                    X_test  = self.X_train[fold_test]
-                    y_train = self.y_train[fold_train]
-                    y_test  = self.y_train[fold_test]
-
-                    classifier = svm.SVC(C=C, gamma=gamma, decision_function_shape='ovr')
-                    model = classifier.fit(X_train, y_train)
-                    rate = model.score(X_test, y_test)
-
-                    fold_success_rates.append(rate)
-
-                success_rate = numpy.average(fold_success_rates)
-                rates.append((success_rate, C, gamma))
+        rates = Parallel(n_jobs=8)(delayed(self.test_parameters)(C, gamma)
+                                   for C in C_candidates
+                                   for gamma in gamma_candidates)
 
         _, self.C, self.gamma = max(rates)
 
