@@ -1,0 +1,2 @@
+# Specify the interface name through which the mobile traffic can be sniffed
+CAPTURE_INTERFACE = 'wlp4s0'

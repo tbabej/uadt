@@ -1,3 +1,4 @@
 automation/config.sh
+automation/config.py
 data/*.pcap
 *.pyc
