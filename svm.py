@@ -47,26 +47,20 @@ class Machine(object):
         y = data['class']
 
         # Convert to numpy arrays and scale inputs
+        splitted = model_selection.train_test_split(
+                X.as_matrix(),
+                y.as_matrix(),
+                train_size=self.train_size
+        )
 
-        # Scaling has to be done before the train/test split to make sure
-        # both test and train sets are scaled in the same manner
-        X = self.scale_array(X.as_matrix())
-        y = y.as_matrix()
-
-        splitted = model_selection.train_test_split(X, y, train_size=self.train_size)
-
-        self.X_train = splitted[0]
-        self.X_test  = splitted[1]
+        # Scaling of the test set has to be performed with the same scaling, as
+        # the data set of the training set, but the training set must not be
+        # taken into account
+        scaler = preprocessing.StandardScaler()
+        self.X_train = scaler.fit_transform(splitted[0])
+        self.X_test  = scaler.transform(splitted[1])
         self.y_train = splitted[2]
         self.y_test  = splitted[3]
-
-    @staticmethod
-    def scale_array(array):
-        """
-        Scales given array to [0,1] range.
-        """
-        scaler = preprocessing.StandardScaler()
-        return scaler.fit_transform(array)
 
     def test_parameters(self, C, gamma):
         """
