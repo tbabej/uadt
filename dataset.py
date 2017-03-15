@@ -70,8 +70,8 @@ def main(arguments):
             f = Flow(path)
             raw_data.append(f.features)
             del f
-        except Exception:
-            print('Processing failed')
+        except Exception as exp:
+            print('Processing failed: {}'.format(exp.message))
             failed.append((path_index, path))
 
     # Unfortunatelly, trollius raises undeterministic errors
