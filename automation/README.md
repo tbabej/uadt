@@ -69,3 +69,21 @@ and need to be specified:
 
     $ cp config.py.in config.py
     $ vim config.py  # Setup your own values
+
+To successfully capture traffic, the `tshark` binary is needed. This is
+provided by the `wireshark-cli` package:
+
+    $ sudo dnf install wireshark-cli -y
+    $ # wireshark-qt / wireshark-gtk also recommended
+
+### Usage
+
+Specific scenarios that are to be executed on the device are implemented as
+plugins. Each plugin is chaaracterized by its identifier. To run a plugin:
+
+    $ python main.py <identifier>
+
+where `<identifier>` stands for the identifier of the plugin you want to run.
+
+This command will generate *.pcap files for all the events captured in the
+given scenario, and store them in the `data/` directory.
