@@ -61,6 +61,25 @@ class SignalScenario(Plugin):
             self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
             time.sleep(3)  # Extra sleep for transfer
 
+        # Send location
+        s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
+        with self.mark(delivered_suffix('send_location')):
+            s.click()
+            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/location_button').click()
+            self.driver.find_element_by_id('com.google.android.gms:id/select_marker_location').click()
+            self.driver.find_element_by_id('com.google.android.gms:id/confirm_button').click()
+            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
+            time.sleep(3)  # Extra sleep for transfer
+
+        # Send GIF
+        s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
+        with self.mark(delivered_suffix('send_gif')):
+            s.click()
+            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/giphy_button').click()
+            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/thumbnail').click()
+            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
+            time.sleep(2)  # Extra sleep for transfer
+
         # Press the back button (once to retract keyboard, once to go back)
         self.driver.press_keycode(4)
         time.sleep(2)
