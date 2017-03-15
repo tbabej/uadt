@@ -113,8 +113,8 @@ def main(arguments):
         print("Searching for optimal parameters..")
         machine.optimize_paramters()
     elif arguments.get('-C') and arguments.get('--gamma'):
-        machine.C = arguments.get('-C')
-        machine.gamma = arguments.get('--gamma')
+        machine.C = float(arguments.get('-C'))
+        machine.gamma = float(arguments.get('--gamma'))
 
     print("Used parameters: C={0}, gamma={1}".format(machine.C, machine.gamma))
     print("Success rate: {0}".format(machine.evaluate()))
