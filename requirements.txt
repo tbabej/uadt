@@ -3,3 +3,4 @@ pyshark
 pandas
 numpy
 sklearn
+Appium-Python-Client
