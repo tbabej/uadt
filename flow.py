@@ -6,8 +6,6 @@ import pprint
 from features import ForwardFeatures, BackwardFeatures, GlobalFeatures
 from constants import CLASSES
 
-filename = 'data/L_cyber_ff_09-17__11_37_53.pcap.TCP_10-0-0-9_59515_212-179-180-110_443.pcap'
-
 
 class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
     """
@@ -22,7 +20,8 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
         self.packets = list(pyshark.FileCapture(path))
 
         # Extract basic data from the flow
-        self.generate_data()
+        packet_data = [self.parse_packet(p) for p in self.packets]
+        self.data = pandas.DataFrame(packet_data)
 
     @staticmethod
     def parse_packet(packet):
@@ -35,16 +34,13 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
         }
         return packet_data
 
-    def generate_data(self):
-        packet_data = [self.parse_packet(p) for p in self.packets]
-        self.data = pandas.DataFrame(packet_data)
-
     @staticmethod
     def compute_time_shifts(data):
         data['timeshift'] = data['timestamp'] - data['timestamp'].shift(1)
         return data
 
-    def generate_features(self):
+    @property
+    def features(self):
         # Dynamically find all features
         feature_method_names = [k for k in dir(self)
                                 if k.startswith('feature_')]
@@ -58,17 +54,15 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
 
         return feature_data
 
-    def detect_class(self):
+    def feature_class(self):
         """
-        Detect the class of the pcap file from the naming conventions.
+        Detect the class of the pcap file from the naming conventions. Detects
+        application using SNI extension in the SSL handshake.
         """
 
+        # Get OS and browser from the filename
         filename = os.path.basename(self.path)
         parts = filename.split('_')
         pcap_os = parts[0]
         browser = parts[2]
         return CLASSES.get((pcap_os, browser))
-
-
-f = Flow(filename)
-pprint.pprint(f.generate_features())
