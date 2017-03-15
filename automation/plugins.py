@@ -40,6 +40,7 @@ class Plugin(LoggerMixin):
             'name': name,
             'timestamp': datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         })
+        filename = os.path.join("data", filename)
 
         args = shlex.split("tshark -l -n -T pdml -i {0} -w {1}"
                            .format(config.CAPTURE_INTERFACE, filename))
