@@ -70,6 +70,7 @@ def main(arguments):
     data = pandas.DataFrame(raw_data)
     filename = arguments['--outfile'] or '{0}.csv'.format(arguments['<directory>'])
 
+    print("Writing to " + filename)
     if start == 0:
         data.to_csv(filename, header=True, mode='w')
     else:
