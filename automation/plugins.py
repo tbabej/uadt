@@ -32,6 +32,7 @@ class Plugin(LoggerMixin):
     app_activity = None  # Must be provided
     new_command_timeout = '50000'
     auto_launch = True
+    no_reset = True
 
     def __init__(self):
         """
@@ -53,6 +54,7 @@ class Plugin(LoggerMixin):
             'appActivity': self.app_activity,
             'newCommandTimeout': self.new_command_timeout,
             'autoLaunch' : self.auto_launch,
+            'noReset': self.no_reset,
         }
 
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
