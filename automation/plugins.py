@@ -106,9 +106,10 @@ class Plugin(LoggerMixin):
 
         with open(filename, 'w') as mark_file:
 
+            # Mark the start point and run the script
             with self.capture():
                 start_point = datetime.datetime.now()
-                yield
+                self.run()
 
             # Capture is over, process the marks now
             mark_file.writelines([
