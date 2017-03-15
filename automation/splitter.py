@@ -30,25 +30,35 @@ def split_file(marks_filename):
         end_timestamp = ' '.join(end_line_parts[:2])
 
         event_name = '_'.join(start_line_parts[-1].strip().split('_')[1:])
+
         query = 'frame.time >= "{0}" and frame.time <= "{1}"'.format(
             start_timestamp,
             end_timestamp
         )
 
-        time_suffix = end_timestamp.replace('-','').replace(':', '').replace(' ', '_').split('.')[0]
+        # Generate the name for the output file
+        time_suffix = end_timestamp.replace('-','')
+        time_suffix = time_suffix.replace(':', '')
+        time_suffix = time_suffix.replace(' ', '_').split('.')[0]
 
-        filename = 'split/' + event_name + '_' + time_suffix + '.pcap'
-        if os.path.exists(filename):
-            filename = filename.split('.')[0] + '_1.pcap'
+        output_filename = os.path.join(
+                'data_split',
+                event_name + '_' + time_suffix + '.pcap'
+        )
+
+        if os.path.exists(output_filename):
+            # This should not happen due to the fact that two events do not
+            # happen at the same time
+            output_filename = output_filename.split('.')[0] + '_1.pcap'
 
         retcode = subprocess.call([
             'tshark',
             '-r', pcap_filename,
-            '-w', filename,
+            '-w', output_filename,
             query])
 
         if retcode != 0:
             print("Extraction of {0} unsuccessful".format(event_name))
 
 
-Parallel(n_jobs=4)(delayed(split_file)(marks_filename) for marks_filename in glob.glob('*.marks'))
+Parallel(n_jobs=4)(delayed(split_file)(marks_filename) for marks_filename in glob.glob('data/*.marks'))
