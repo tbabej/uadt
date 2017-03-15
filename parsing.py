@@ -1,7 +1,10 @@
+import os
 import pyshark
 import pandas
+import pprint
 
 from features import ForwardFeatures, BackwardFeatures
+from constants import CLASSES
 
 filename = 'data/L_cyber_ff_09-17__11_37_53.pcap.TCP_10-0-0-9_59515_212-179-180-110_443.pcap'
 
@@ -55,6 +58,17 @@ class Flow(ForwardFeatures, BackwardFeatures):
 
         return feature_data
 
+    def detect_class(self):
+        """
+        Detect the class of the pcap file from the naming conventions.
+        """
+
+        filename = os.path.basename(self.path)
+        parts = filename.split('_')
+        pcap_os = parts[0]
+        browser = parts[2]
+        return CLASSES.get((pcap_os, browser))
+
 
 f = Flow(filename)
-print(f.generate_features())
+pprint.pprint(f.generate_features())
