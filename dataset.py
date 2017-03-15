@@ -68,11 +68,16 @@ def main(arguments):
         raw_data.append(f.features)
         del f
 
-    # Write data out to file
-    data = pandas.DataFrame(raw_data)
-    filename = arguments['--outfile'] or '{0}.csv'.format(arguments['<directory>'])
+    # Determining filename can be complicated
+    directory_name = os.path.basename(arguments['<directory>'])
+    if not directory_name:
+        directory_name = os.path.dirname(arguments['<directory>'])
+        directory_name = os.path.basename(directory_name)
+    filename = arguments['--outfile'] or '{0}.csv'.format(directory_name)
 
+    # Write data out to file
     print("Writing to " + filename)
+    data = pandas.DataFrame(raw_data)
     if start == 0:
         data.to_csv(filename, header=True, mode='w')
     else:
