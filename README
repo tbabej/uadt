@@ -1,0 +1,29 @@
+Diplomka
+--------
+
+This project (so far) tries to replicate the results obtained in the attached paper (paper.pdf).
+
+Usage
+-----
+
+First, make sure you have all the dependencies:
+
+    $ pip install -r requirements.txt
+
+Additionally, you will need to provide training data in the for of pcap files:
+
+    $ ls ~/mypcaps/*.pcap
+    one.pcap
+    two.pcap
+    ...
+
+To generate the dataset of features extracted from the pcap files, use dataset.py:
+
+    $ ./dataset.py ~/mypcaps/ --outfile data.csv
+
+To train and evaluate the SVM on this data, use svm.py:
+
+    $ ./svm.py data.csv --optimize
+    Searching for optimal parameters..
+    Used parameters: C=2048.0, gamma=0.03125
+    Success rate: 0.744769874477
