@@ -12,3 +12,39 @@
 
 === Replicating research ===
 
+==== Base features ====
+Feature names are a bit cryptic, here's a clarifying table:
+
+|---------------------------------------------|----------------------------------------------------------|---------------------|
+| Feature                                     | Meaning                                                  | Requires capability |
+|---------------------------------------------|----------------------------------------------------------|---------------------|
+| # Forward packets                           | Number of packets sent                                   | Packet count        |
+| # Forward total Bytes                       | Total size of packets sent                               | Packet size         |
+| Min forward inter arrival time difference   | Minimal time difference between consecutive sent packets | Packet sent time    |
+| Max forward inter arrival time difference   | Maximum                                                  |                     |
+| Mean forward inter arrival time difference  | Mean of                                                  |                     |
+| STD forward inter arrival time difference   | STD of                                                   |                     |
+| Mean forward packets                        | Mean of sizes of sent packets                            | Packet size         |
+| STD forward packets                         | STD  of                                                  |                     |
+|---------------------------------------------|----------------------------------------------------------|---------------------|
+| # Backward packets                          | Same as above, but for packets received.                 |                     |
+| # Backward total Bytes                      |                                                          |                     |
+| Min backward inter arrival time difference  |                                                          |                     |
+| Max backward inter arrival time difference  |                                                          |                     |
+| Mean backward inter arrival time difference |                                                          |                     |
+| STD backward inter arrival time difference  |                                                          |                     |
+| Mean backward packets                       |                                                          |                     |
+| STD backward packets                        |                                                          |                     |
+|---------------------------------------------|----------------------------------------------------------|---------------------|
+| Mean forward TTL value                      |                                                          | TTL value           |
+| Minimum forward packet                      | Minimum sent      packet size                            |                     |
+| Minimum backward packet                     | Minimum received                                         |                     |
+| Maximum forward packet                      | Maximum sent                                             |                     |
+| Maximum backward packet                     | Maximum received                                         |                     |
+|---------------------------------------------|----------------------------------------------------------|---------------------|
+| # Total packets                             | Total number of packets                                  | Packet count        |
+| Minimum packet size                         | Minimum packet size                                      | Packet size         |
+| Maximum packet size                         | Maximum                                                  |                     |
+| Mean packet size                            | Mean                                                     |                     |
+| Packet size variance                        | Variance                                                 |                     |
+|---------------------------------------------|----------------------------------------------------------|---------------------|
