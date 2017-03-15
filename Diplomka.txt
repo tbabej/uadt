@@ -3,10 +3,14 @@
     * [X] Download the data  #46eb37c2
     * [X] Download the data again, all of it  #3434ef82
     * [X] Write to author about classes  #3f39fb09
-    * [ ] Find out how to parse pcap files in python  #ddceb644
+    * [X] Learn required networking concepts  #4a6b3e25
+        * [X] Forward packets  #87db638b
+    * [X] Find out how to parse pcap files in python  #ddceb644
     * [ ] Learn how to extract features  #7625e9a2
-    * [ ] Learn required networking concepts  #4a6b3e25
-        * [ ] Forward packets  #87db638b
+        * [X] Filter sent/received  #d5978ac4
+        * [X] Packet sent/received time  #23800db2
+        * [X] Packet size  #b624435d
+        * [X] Packet TTL  #44a1248a
     * [ ] Learn required scikit-learn concepts  #b2e235f9
         * [ ] Support vector machines  #d460835f
 
@@ -48,3 +52,9 @@ Feature names are a bit cryptic, here's a clarifying table:
 | Mean packet size                            | Mean                                                     |                     |
 | Packet size variance                        | Variance                                                 |                     |
 |---------------------------------------------|----------------------------------------------------------|---------------------|
+
+==== Internal data representation of a flow ====
+
+* A Pandas DataFrame, having following columns:
+  * Direction (forward/backwards), size, timestamp, ttl
+* All of the feature output should be computed from internal data
