@@ -6,6 +6,8 @@ import pprint
 from features import ForwardFeatures, BackwardFeatures, GlobalFeatures
 from constants import CLASSES
 
+LOCAL_IP = '10.42.0.71'
+
 
 class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
     """
@@ -29,7 +31,7 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
             'size': int(packet.captured_length),
             'timestamp': float(packet.sniff_timestamp),
             'ttl': int(packet.ip.ttl),
-            'direction': 'forward' if packet.tcp.dstport == '443'
+            'direction': 'forward' if packet.ip.src == LOCAL_IP
                          else 'backward'
         }
         return packet_data
