@@ -24,6 +24,11 @@ class TestScenario(Plugin):
         driver.implicitly_wait(60)
 
         s = driver.find_element_by_id('com.android.chrome:id/search_box_text')
-        s.click()
+
+        with self.capture('click_event'):
+            s.click()
+
         s = driver.find_element_by_id('com.android.chrome:id/url_bar')
-        s.send_keys("fi.muni.cz\n")
+
+        with self.capture('website_visit'):
+            s.send_keys("fi.muni.cz\n")
