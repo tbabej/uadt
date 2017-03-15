@@ -10,7 +10,7 @@ First, make sure you have all the dependencies:
 
     $ pip install -r requirements.txt
 
-Additionally, you will need to provide training data in the for of pcap files:
+Additionally, you will need to provide training data in the form of pcap files:
 
     $ ls ~/mypcaps/*.pcap
     one.pcap
