@@ -1,19 +1,26 @@
 == Diplomka | project:Education.School comp:MLThesis ==
-* [O] Replicate research  #56ddc0fe
+* [o] Replicate research  #56ddc0fe
     * [X] Download the data  #46eb37c2
     * [X] Download the data again, all of it  #3434ef82
     * [X] Write to author about classes  #3f39fb09
     * [X] Learn required networking concepts  #4a6b3e25
         * [X] Forward packets  #87db638b
     * [X] Find out how to parse pcap files in python  #ddceb644
-    * [O] Learn how to extract basic features  #7625e9a2
+    * [X] Learn how to extract features  #7625e9a2
         * [X] Filter sent/received  #d5978ac4
         * [X] Packet sent/received time  #23800db2
         * [X] Packet size  #b624435d
         * [X] Packet TTL  #44a1248a
-        * [ ] Compute derived features
-    * [ ] Learn required scikit-learn concepts  #b2e235f9
-        * [ ] Support vector machines  #d460835f
+    * [X] Learn required scikit-learn concepts  #b2e235f9
+        * [X] Data manipulation  #1a4d31e8
+        * [X] Support vector machines  #d460835f
+        * [X] Optimize parameters using 5-fold cross validation  #38807894
+    * [X] Improve tooling and interface  #29a5c9e6
+        * [X] Provide friendly CLI  #18551bf9
+        * [X] Add support for parallelization and filtering by size  #0ba09194
+    * [ ] Add second set of 'new' features  #e9de97b2
+    * [ ] Use SNI value to determine application  #4062e16c
+    * [ ] Investigate why success rate is not as high as expected  #a1aecb67
 
 === Replicating research ===
 
