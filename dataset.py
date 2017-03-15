@@ -68,7 +68,8 @@ def main(arguments):
                   .format(path, path_index, files_count))
 
             f = Flow(path)
-            raw_data.append(f.features)
+            if not f.data.empty:
+                raw_data.append(f.features)
             del f
         except Exception as exp:
             print('Processing failed: {}'.format(exp.message))
