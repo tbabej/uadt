@@ -5,6 +5,8 @@ import subprocess
 import shlex
 import time
 
+from appium import webdriver
+
 import config
 from logger import LoggerMixin
 
@@ -22,6 +24,41 @@ class PluginMount(type):
 class Plugin(LoggerMixin):
 
     __metaclass__ = PluginMount
+
+    platform_name = 'Android'
+    platform_version = '7.1'
+    device_name = 'Nexus 5X'
+    app_package = None  # Must be provided
+    app_activity = None  # Must be provided
+    new_command_timeout = '50000'
+    auto_launch = True
+
+    def __init__(self):
+        """
+        Initialize the plugin. Create Appium driver instance with required
+        capabilities.
+        """
+
+        if self.app_package is None:
+            raise ValueError("Package name must be provided.")
+
+        if self.app_activity is None:
+            raise ValueError("Startup activity name must be provided.")
+
+        capabilities = {
+            'platformName': self.platform_name,
+            'platformVersion': self.platform_version,
+            'deviceName': self.device_name,
+            'appPackage': self.app_package,
+            'appActivity': self.app_activity,
+            'newCommandTimeout': self.new_command_timeout,
+            'autoLaunch' : self.auto_launch,
+        }
+
+        self.driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
+
+        # Configure generous implicit wait time (if manual action is needed)
+        self.driver.implicitly_wait(60)
 
     @contextlib.contextmanager
     def capture(self, name, timeout=5):
