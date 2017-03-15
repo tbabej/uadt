@@ -1,5 +1,5 @@
 == Diplomka | project:Education.School comp:MLThesis ==
-* [o] Replicate research  #56ddc0fe
+* [O] Replicate research  #56ddc0fe
     * [X] Download the data  #46eb37c2
     * [X] Download the data again, all of it  #3434ef82
     * [X] Write to author about classes  #3f39fb09
@@ -18,51 +18,70 @@
     * [X] Improve tooling and interface  #29a5c9e6
         * [X] Provide friendly CLI  #18551bf9
         * [X] Add support for parallelization and filtering by size  #0ba09194
+    * [X] Investigate why success rate is not as high as expected  #a1aecb67
     * [ ] Add second set of 'new' features  #e9de97b2
     * [ ] Use SNI value to determine application  #4062e16c
-    * [ ] Investigate why success rate is not as high as expected  #a1aecb67
+* [ ] Improve framework  #11558ebb
+    * [ ] Introduce parallelization for model selection  #9acb36d3
+    * [ ] Use direct tshark backend  #f014ed1a
+* [ ] Decide about the scope  #a0213452
+    * [ ] Investigate popular messaging applications  #595cb660
+    * [ ] Pick interesting protocols  #cd523130
+* [ ] Generate new dataset  #31e8daa3
+    * [ ] Make sure actions can be automated  #532215db
+    * [ ] Prepare scenarios containing different events  #f1b0946f
+    * [ ] Perform data generation  #ad42fa96
+* [ ] Identify features for protocols used  #e919ef17
+* [ ] Perform classification  #92098355
 
 === Replicating research ===
 
 ==== Base features ====
 Feature names are a bit cryptic, here's a clarifying table:
 
-|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Feature                                     | Key         | Meaning                                                  | Requires capability |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| # Forward packets                           | f_num       | Number of packets sent                                   | Packet count        |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| # Forward total Bytes                       | f_size_sum  | Total size of packets sent                               | Packet size         |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Min forward inter arrival time difference   | f_time_min  | Minimal time difference between consecutive sent packets | Packet sent time    |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Max forward inter arrival time difference   | f_time_max  | Maximum                                                  |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Mean forward inter arrival time difference  | f_time_mean | Mean of                                                  |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| STD forward inter arrival time difference   | f_time_std  | STD of                                                   |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Mean forward packets                        | f_size_mean | Mean of sizes of sent packets                            | Packet size         |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| STD forward packets                         | f_size_std  | STD  of                                                  |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| # Backward packets                          | b_num       | Same as above, but for packets received.                 |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| # Backward total Bytes                      | b_size_sum  |                                                          |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Min backward inter arrival time difference  | b_time_min  |                                                          |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Max backward inter arrival time difference  | b_time_max  |                                                          |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Mean backward inter arrival time difference | b_time_mean |                                                          |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| STD backward inter arrival time difference  | b_time_std  |                                                          |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Mean backward packets                       | b_size_mean |                                                          |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| STD backward packets                        | b_size_std  |                                                          |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| Mean forward TTL value                      | f_ttl_mean  | TTL value                                                |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Minimum forward packet                      | f_size_min  | Minimum sent      packet size                            |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Minimum backward packet                     | b_size_min  | Minimum received                                         |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Maximum forward packet                      | f_size_max  | Maximum sent                                             |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Maximum backward packet                     | b_size_max  | Maximum received                                         |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| # Total packets                             | t_num       | Total number of packets                                  | Packet count        |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Minimum packet size                         | t_size_min  | Minimum packet size                                      | Packet size         |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Maximum packet size                         | t_size_max  | Maximum                                                  |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Mean packet size                            | t_size_mean | Mean                                                     |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-| Packet size variance                        | t_size_var  | Variance                                                 |                     |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |
-|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|
+| Feature                                     | Key         | Meaning                                                  | Requires capability |
+|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|
+| # Forward packets                           | f_num       | Number of packets sent                                   | Packet count        |
+| # Forward total Bytes                       | f_size_sum  | Total size of packets sent                               | Packet size         |
+| Min forward inter arrival time difference   | f_time_min  | Minimal time difference between consecutive sent packets | Packet sent time    |
+| Max forward inter arrival time difference   | f_time_max  | Maximum                                                  |                     |
+| Mean forward inter arrival time difference  | f_time_mean | Mean of                                                  |                     |
+| STD forward inter arrival time difference   | f_time_std  | STD of                                                   |                     |
+| Mean forward packets                        | f_size_mean | Mean of sizes of sent packets                            | Packet size         |
+| STD forward packets                         | f_size_std  | STD  of                                                  |                     |
+|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|
+| # Backward packets                          | b_num       | Same as above, but for packets received.                 |                     |
+| # Backward total Bytes                      | b_size_sum  |                                                          |                     |
+| Min backward inter arrival time difference  | b_time_min  |                                                          |                     |
+| Max backward inter arrival time difference  | b_time_max  |                                                          |                     |
+| Mean backward inter arrival time difference | b_time_mean |                                                          |                     |
+| STD backward inter arrival time difference  | b_time_std  |                                                          |                     |
+| Mean backward packets                       | b_size_mean |                                                          |                     |
+| STD backward packets                        | b_size_std  |                                                          |                     |
+|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|
+| Mean forward TTL value                      | f_ttl_mean  | TTL value                                                |                     |
+| Minimum forward packet                      | f_size_min  | Minimum sent      packet size                            |                     |
+| Minimum backward packet                     | b_size_min  | Minimum received                                         |                     |
+| Maximum forward packet                      | f_size_max  | Maximum sent                                             |                     |
+| Maximum backward packet                     | b_size_max  | Maximum received                                         |                     |
+|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|
+| # Total packets                             | t_num       | Total number of packets                                  | Packet count        |
+| Minimum packet size                         | t_size_min  | Minimum packet size                                      | Packet size         |
+| Maximum packet size                         | t_size_max  | Maximum                                                  |                     |
+| Mean packet size                            | t_size_mean | Mean                                                     |                     |
+| Packet size variance                        | t_size_var  | Variance                                                 |                     |
+|---------------------------------------------|-------------|----------------------------------------------------------|---------------------|
 
 ==== Internal data representation of a flow ====
 
 * A Pandas DataFrame, having following columns:
   * Direction (forward/backwards), size, timestamp, ttl
 * All of the feature output should be computed from internal data
+
+=== Literature ===
+
+==== Processed ====
+* (useful, used) Practical guide to SVC: http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf
+
+==== To process ====
