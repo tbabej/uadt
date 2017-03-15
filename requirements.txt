@@ -1,0 +1,5 @@
+docopt
+pyshark
+pandas
+numpy
+sklearn
