@@ -36,3 +36,9 @@ The dataset and svm commands have more options, explore their documentation via:
 
     $ ./dataset.py -h
     $ ./svm.py -h
+
+
+Useful
+------
+
+Pre-generated .csv training data sets are available in trainingsets/ directory.
