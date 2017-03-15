@@ -57,3 +57,9 @@ To run appium, you can use the run_appium.sh script, which will validate your
 configuration and if everything looks good, it will launch Appium server:
 
     $ ./run_appium.sh
+
+However, Appium needs correctly set up `JAVA_HOME` and `ANDROID_HOME`
+environment variables. These are sourced from config.sh file:
+
+    $ cp config.sh.in config.sh
+    $ vim config.sh  # Setup your own values
