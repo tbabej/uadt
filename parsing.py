@@ -55,12 +55,12 @@ class Flow(object):
 
     @property
     def forward_packets(self):
-        data = self.data[self.data['direction'] == 'forward']
+        data = self.data[self.data['direction'] == 'forward'].copy()
         return self.compute_time_shifts(data)
 
     @property
     def backward_packets(self):
-        data = self.data[self.data['direction'] == 'backward']
+        data = self.data[self.data['direction'] == 'backward'].copy()
         return self.compute_time_shifts(data)
 
     def feature_f_num(self):
