@@ -5,6 +5,7 @@ import subprocess
 import shlex
 import time
 
+import config
 from logger import LoggerMixin
 
 class PluginMount(type):
@@ -40,7 +41,8 @@ class Plugin(LoggerMixin):
             'timestamp': datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         })
 
-        args = shlex.split("tshark -l -n -T pdml -i wlp4s0 -w {0}".format(filename))
+        args = shlex.split("tshark -l -n -T pdml -i {0} -w {1}"
+                           .format(config.CAPTURE_INTERFACE, filename))
 
         self.debug("Capturing event '{0}' to file '{1}'".format(name, filename))
 
