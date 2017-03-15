@@ -1,3 +1,5 @@
+#!/usr/bin/python2
+
 """
 Dataset - generate the dataset out of directory with pcap files.
 
