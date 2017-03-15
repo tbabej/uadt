@@ -58,8 +58,9 @@ def main(arguments):
 
     # Extract features from selected files
     raw_data = []
-    for counter, path in enumerate(paths):
-        print '[{1}/{2}] Processing: {0}'.format(path, counter+1, files_count)
+    for counter, path in enumerate(paths[start:end]):
+        print '[{1}/{2}] Processing: {0}'.format(path,
+                                                 start+counter+1, files_count)
 
         f = Flow(path)
         raw_data.append(f.features)
