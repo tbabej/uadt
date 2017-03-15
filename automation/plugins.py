@@ -62,29 +62,32 @@ class Plugin(LoggerMixin):
         # Configure generous implicit wait time (if manual action is needed)
         self.driver.implicitly_wait(60)
 
+        self.file_identifier = '{plugin_identifier}_{timestamp}'.format(**{
+            'plugin_identifier': self.identifier,
+            'timestamp': datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        })
+
+        self.marks = []
+
     @contextlib.contextmanager
-    def capture(self, name, timeout=5):
+    def capture(self, timeout=5):
         """
         Captures network traffic that passes the network inteface while the
         yielded block of code is executed + while the timeout expires.
 
         Arguments:
-          name: specify the name of the event, used to identify output file
           timeout: the number of seconds we should wait (and capture) after the
                    action has been performed
         """
 
-        filename = '{plugin_identifier}_{name}_{timestamp}.pcap'.format(**{
-            'plugin_identifier': self.identifier,
-            'name': name,
-            'timestamp': datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-        })
-        filename = os.path.join("data", filename)
-
+        filename = os.path.join("data", self.file_identifier + '.pcap')
         args = shlex.split("tshark -l -n -T pdml -i {0} -w {1}"
                            .format(config.CAPTURE_INTERFACE, filename))
 
-        self.debug("Capturing event '{0}' to file '{1}'".format(name, filename))
+        self.debug("Capturing script '{0}' to file '{1}'".format(
+            self.identifier,
+            filename
+        ))
 
         with open(os.devnull, 'w') as f:
             p = subprocess.Popen(args, stdout=f, stderr=f)
@@ -93,3 +96,47 @@ class Plugin(LoggerMixin):
             # action has time to happen
             time.sleep(timeout)
             p.terminate()
+
+    def execute(self):
+        """
+        Used to wrap scenario run, performing necessary pre and post actions.
+        """
+
+        filename = os.path.join("data", self.file_identifier + '.marks')
+
+        with open(filename, 'w') as mark_file:
+
+            with self.capture():
+                start_point = datetime.datetime.now()
+                yield
+
+            # Capture is over, process the marks now
+            mark_file.writelines([
+                '{time} [{shift}]: {name}'.format(**{
+                    'time': time.strftime("%Y-%m-%d %H:%M:%S"),
+                    'shift': (time - start_point).total_seconds(),
+                    'name': name,
+                    })
+                for time, name in self.marks
+            ])
+
+    def _record_mark(self, name):
+        """
+        Marks the current event name in the mark list with the current
+        timestamp.
+
+        Perform as little as possible to make sure the timestamp is as precise
+        as it gets. Processing happens after all data has been captured.
+        """
+
+        self.marks.append((name, datetime.datetime.now()))
+
+    @contextlib.contextmanager
+    def mark(self, name, timeout=5):
+        """
+        Marks the timestamp of the event in the mark file.
+        """
+
+        self._record_mark('start_{0}'.format(name))
+        yield
+        self._record_mark('end_{0}'.format(name))
