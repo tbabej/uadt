@@ -48,13 +48,20 @@ class Flow(object):
 
         return feature_data
 
+    @staticmethod
+    def compute_time_shifts(data):
+        data['timeshift'] = data['timestamp'] - data['timestamp'].shift(1)
+        return data
+
     @property
     def forward_packets(self):
-        return self.data[self.data['direction'] == 'forward']
+        data = self.data[self.data['direction'] == 'forward']
+        return self.compute_time_shifts(data)
 
     @property
     def backward_packets(self):
-        return self.data[self.data['direction'] == 'backward']
+        data = self.data[self.data['direction'] == 'backward']
+        return self.compute_time_shifts(data)
 
     def feature_f_num(self):
         """
@@ -91,6 +98,31 @@ class Flow(object):
         Returns the mean size of the forward packets.
         """
         return self.forward_packets['size'].std()
+
+    def feature_f_time_min(self):
+        """
+        Returns the smallest inter time difference among forward packets.
+        """
+        return self.forward_packets['timeshift'].min()
+
+    def feature_f_time_max(self):
+        """
+        Returns the biggest inter time difference among forward packets.
+        """
+        return self.forward_packets['timeshift'].max()
+
+    def feature_f_time_mean(self):
+        """
+        Returns the mean inter time difference among forward packets.
+        """
+        return self.forward_packets['timeshift'].mean()
+
+    def feature_f_time_std(self):
+        """
+        Returns the std of inter time difference among forward packets.
+        """
+        return self.forward_packets['timeshift'].std()
+
 
 f = Flow(filename)
 print(f.generate_features())
