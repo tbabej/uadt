@@ -62,10 +62,12 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
 
         # Get OS and browser from the filename
         filename = os.path.basename(self.path)
-        parts = filename.split('_')
-        pcap_os = parts[0].upper()
-        browser = parts[2].lower()
-        return CLASSES.get((pcap_os, browser))
+        class_parts = filename.split('_')[:-2]
+        if class_parts[-1] in ('delivered', 'undelivered'):
+            class_parts = class_parts[:-1]
+
+        class_name = '_'.join(class_parts)
+        return CLASSES.get(class_name)
 
     def get_sni(self):
         sni_packet = pyshark.FileCapture(path,
