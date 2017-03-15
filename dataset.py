@@ -2,10 +2,11 @@
 Dataset - generate the dataset out of directory with pcap files.
 
 Usage:
-  dataset.py <directory> [--outfile=<filename>] [--part=<spec>]
+  dataset.py <directory> [--outfile=<filename>] [--part=<spec>] [--max-size=<size>]
 
 Options:
-  --outfile=<kn>  The name of output .csv file [default: <directory>.csv].
+  --outfile=<name>  The name of output .csv file (defaults to <directory>.csv).
+  --max-size=<size>  The maximum pcap file size (in MBs).
   --part=<num>  Specifies the part of the dataset to generate, see "Parts" section.
 
 Parts:
@@ -35,6 +36,13 @@ from flow import Flow
 def main(arguments):
     search_string = os.path.join(arguments['<directory>'], '*.pcap')
     paths = list(sorted(glob.glob(search_string)))
+
+    # If asked to, ignore files bigger than max-size
+    size = arguments.get('--max-size')
+    if size:
+        size = int(size) * 1024 ** 2
+        paths = list(filter(lambda p: os.path.getsize(p) < size, paths))
+
     files_count = len(paths)
 
     part = arguments.get('--part')
