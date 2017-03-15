@@ -72,8 +72,21 @@ class Machine(object):
 
         _, self.C, self.gamma = max(rates)
 
+    def evaluate(self):
+        """
+        Evaluates the SVM on the training data set.
+        """
+
+        classifier = svm.SVC(C=self.C, gamma=self.gamma, decision_function_shape='ovo')
+        model = classifier.fit(self.X_train, self.y_train)
+        rate = model.score(self.X_test, self.y_test)
+
+        return rate
+
+
 
 machine = Machine("dataset1000.csv", train_size=0.7)
 machine.prepare_data()
 machine.optimize_paramters()
 print machine.C, machine.gamma
+print machine.evaluate()
