@@ -114,7 +114,7 @@ class Plugin(LoggerMixin):
             # Capture is over, process the marks now
             mark_file.writelines([
                 '{time} [{shift}]: {name}\n'.format(**{
-                    'time': time.strftime("%Y-%m-%d %H:%M:%S"),
+                    'time': time.strftime("%Y-%m-%d %H:%M:%S.%f"),
                     'shift': (time - start_point).total_seconds(),
                     'name': name,
                     })
