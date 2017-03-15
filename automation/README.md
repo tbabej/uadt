@@ -41,3 +41,19 @@ the two transparently.
 To communicate with the device we will need the `adb` tool:
 
     $ sudo dnf install android-tools
+
+To install Appium you need to have `nodejs` (and its npm package manager):
+
+    $ sudo dnf install nodejs npm -y
+
+Then you can obtain Appium simply using npm:
+
+    $ sudo npm install -g appium appium-doctor
+
+The `appium-doctor` package is used to verify the correctness of the
+environment setup for Appium.
+
+To run appium, you can use the run_appium.sh script, which will validate your
+configuration and if everything looks good, it will launch Appium server:
+
+    $ ./run_appium.sh
