@@ -58,7 +58,7 @@ class Machine(object):
         """
         Scales given array to [0,1] range.
         """
-        scaler = preprocessing.MinMaxScaler()
+        scaler = preprocessing.StandardScaler()
         return scaler.fit_transform(array)
 
     def optimize_paramters(self):
