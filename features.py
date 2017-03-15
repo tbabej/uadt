@@ -68,6 +68,12 @@ class ForwardFeatures(object):
         """
         return self.forward_packets['timeshift'].std()
 
+    def feature_f_ttl_mean(self):
+        """
+        Returns the mean of TTL values in forward packets.
+        """
+        return self.forward_packets['ttl'].mean()
+
 
 class BackwardFeatures(object):
     """
