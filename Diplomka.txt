@@ -1,0 +1,14 @@
+== Diplomka | project:Education.School comp:MLThesis ==
+* [.] Replicate research  #56ddc0fe
+    * [X] Download the data  #46eb37c2
+    * [ ] Download the data again, all of it  #3434ef82
+    * [ ] Write to author about classes  #3f39fb09
+    * [ ] Find out how to parse pcap files in python  #ddceb644
+    * [ ] Learn how to extract features  #7625e9a2
+    * [ ] Learn required networking concepts  #4a6b3e25
+        * [ ] Forward packets?!  #87db638b
+    * [ ] Learn required scikit-learn concepts  #b2e235f9
+        * [ ] Support vector machines
+
+=== Replicating research ===
+
