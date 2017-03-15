@@ -181,3 +181,17 @@ class GlobalFeatures(object):
         Returns the variance of size of all the packets.
         """
         return self.data['size'].var()
+
+
+class TCPFeatures(object):
+    """
+    Provides implementation of features related to TCP metadata.
+    """
+
+    def feature_tcp_window_size(self):
+        first_packet = self.packets[0]
+        return int(first_packet.tcp.window_size)
+
+    def feature_tcp_window_scale(self):
+        first_packet = self.packets[0]
+        return int(first_packet.tcp.window_size)
