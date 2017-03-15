@@ -63,3 +63,9 @@ environment variables. These are sourced from config.sh file:
 
     $ cp config.sh.in config.sh
     $ vim config.sh  # Setup your own values
+
+Additionally, some Python constants (i.e. interface name) are machine specific
+and need to be specified:
+
+    $ cp config.py.in config.py
+    $ vim config.py  # Setup your own values
