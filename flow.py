@@ -63,8 +63,8 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
         # Get OS and browser from the filename
         filename = os.path.basename(self.path)
         parts = filename.split('_')
-        pcap_os = parts[0]
-        browser = parts[2]
+        pcap_os = parts[0].upper()
+        browser = parts[2].lower()
         return CLASSES.get((pcap_os, browser))
 
     def get_sni(self):
