@@ -140,4 +140,5 @@ class Plugin(LoggerMixin):
 
         self._record_mark('start_{0}'.format(name))
         yield
+        time.sleep(timeout)
         self._record_mark('end_{0}'.format(name))
