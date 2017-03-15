@@ -2,6 +2,11 @@ import time
 
 from appium import webdriver
 
+from plugins import Plugin
+
+ONLINE_USER = "Kram"
+OFFLINE_USER = "Babej"
+
 class SignalScenario(Plugin):
     """
     A testing scenario for Signal messagenger.
