@@ -66,3 +66,8 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
         pcap_os = parts[0]
         browser = parts[2]
         return CLASSES.get((pcap_os, browser))
+
+    def get_sni(self):
+        sni_packet = pyshark.FileCapture(path,
+            display_filter='ssl.handshake.extensions_server_name')[0]
+        return sni_packet.ssl.handshake_extensions_server_name
