@@ -33,3 +33,40 @@ class Flow(object):
     def generate_data(self):
         packet_data = [self.parse_packet(p) for p in self.packets]
         self.data = pandas.DataFrame(packet_data)
+
+    @property
+    def forward_packets(self):
+        return self.data[self.data['direction'] == 'forward']
+
+    @property
+    def backward_packets(self):
+        return self.data[self.data['direction'] == 'backward']
+
+    def feature_f_num(self):
+        """
+        Returns the number of forward packets.
+        """
+        return len(self.forward_packets)
+
+    def feature_f_size_sum(self):
+        """
+        Returns the total size of all forward packets.
+        """
+        return self.forward_packets['size'].sum()
+
+    def generate_features(self):
+        # Dynamically find all features
+        feature_method_names = [k for k in self.__class__.__dict__.keys()
+                                if k.startswith('feature_')]
+
+        # Generate a data dict with results of feature methods
+        feature_data = {}
+        for method_name in feature_method_names:
+            method = getattr(self, method_name)
+            key = method_name.split('feature_')[1]
+            feature_data[key] = method()
+
+        return feature_data
+
+f = Flow(filename)
+print(f.generate_features())
