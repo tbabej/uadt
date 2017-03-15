@@ -23,7 +23,7 @@ class Plugin(LoggerMixin):
 
     @contextlib.contextmanager
     def capture(self, name):
-        filename = '{plugin_identifier}_{name}_{timestamp}.pcap'.format({
+        filename = '{plugin_identifier}_{name}_{timestamp}.pcap'.format(**{
             'plugin_identifier': self.identifier,
             'name': name,
             'timestamp': datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
