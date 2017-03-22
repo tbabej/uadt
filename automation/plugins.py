@@ -68,6 +68,7 @@ class Plugin(LoggerMixin):
         })
 
         self.marks = []
+        self.metadata = {}
 
     @contextlib.contextmanager
     def capture(self, timeout=5):
@@ -108,37 +109,46 @@ class Plugin(LoggerMixin):
 
             # Mark the start point and run the script
             with self.capture():
-                start_point = datetime.datetime.now()
                 self.run()
 
             # Capture is over, process the marks now
-            mark_file.writelines([
-                '{time} [{shift}]: {name}\n'.format(**{
-                    'time': time.strftime("%Y-%m-%d %H:%M:%S.%f"),
-                    'shift': (time - start_point).total_seconds(),
-                    'name': name,
-                    })
-                for name, time in self.marks
-            ])
+            mark_file.write(json.dumps(self.marks))
 
-    def _record_mark(self, name):
+    def add_metadata(self, key, value):
         """
-        Marks the current event name in the mark list with the current
-        timestamp.
-
-        Perform as little as possible to make sure the timestamp is as precise
-        as it gets. Processing happens after all data has been captured.
+        Adds metadata element into the mark dictionary.
         """
 
-        self.marks.append((name, datetime.datetime.now()))
+        self.metadata[key] = value
 
     @contextlib.contextmanager
     def mark(self, name, timeout=5):
         """
-        Marks the timestamp of the event in the mark file.
+        Marks the event in the marks file.
+        Captures:
+            - start and end of the interval
+            - name of the event marked
+            - timeout used
+            - any metadata explicitly stored
         """
 
-        self._record_mark('start_{0}'.format(name))
+        # Perform the marked event, capture start/end timestamps
+        start = datetime.datetime.now()
         yield
         time.sleep(timeout)
-        self._record_mark('end_{0}'.format(name))
+        end = datetime.datetime.now()
+
+        # Generate mark data
+        mark_data = {
+            'name': name,
+            'start': start.strftime("%Y-%m-%d %H:%M:%S.%f"),
+            'end': end.strftime("%Y-%m-%d %H:%M:%S.%f"),
+            'timeout': timeout,
+        }
+        mark_data.update(self.metadata)
+
+        # Save the generated mark data
+        self.marks.append(mark_data)
+
+        # Reset metadata store
+        self.metadata = {}
