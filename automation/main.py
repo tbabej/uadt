@@ -1,5 +1,5 @@
 """
-Usage: theater <scenario>
+Usage: theater [-v] <scenario>
 """
 
 import importlib
@@ -49,7 +49,7 @@ class Theater(LoggerMixin):
 
     def main(self):
         arguments = docopt(__doc__, version='theater')
-        self.setup_logging(level='debug')
+        self.setup_logging(level='debug' if arguments['-v'] else 'info')
         self.import_plugins()
 
         scenario = self.get_plugin(arguments['<scenario>'])()
