@@ -34,6 +34,8 @@ class Plugin(LoggerMixin):
     auto_launch = True
     no_reset = True
 
+    dual_phone = False
+
     def __init__(self):
         """
         Initialize the plugin. Create Appium driver instance with required
@@ -46,10 +48,14 @@ class Plugin(LoggerMixin):
         if self.app_activity is None:
             raise ValueError("Startup activity name must be provided.")
 
-        capabilities = {
-            'platformName': self.platform_name,
-            'platformVersion': self.platform_version,
-            'deviceName': self.device_name,
+        if len(config.PHONES) < 1:
+            raise ValueError("Please configure at least one mobile device in config.py")
+
+        if self.dual_phone and len(config.PHONES) < 2:
+            raise ValueError("Scenario requires two mobile devices. Please "
+                             "configure at least two mobile devices in config.py")
+
+        generic_capabilities = {
             'appPackage': self.app_package,
             'appActivity': self.app_activity,
             'newCommandTimeout': self.new_command_timeout,
@@ -57,10 +63,22 @@ class Plugin(LoggerMixin):
             'noReset': self.no_reset,
         }
 
+        capabilities = generic_capabilities.copy()
+        capabilities.update(config.PHONES[0])
+
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
 
         # Configure generous implicit wait time (if manual action is needed)
         self.driver.implicitly_wait(60)
+
+        if self.dual_phone:
+            capabilities = generic_capabilities.copy()
+            capabilities.update(config.PHONES[1])
+
+            self.driver2 = webdriver.Remote('http://localhost:4724/wd/hub', capabilities)
+
+            # Configure generous implicit wait time (if manual action is needed)
+            self.driver2.implicitly_wait(60)
 
         self.generator = DataGenerator()
 
