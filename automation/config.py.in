@@ -1,2 +1,17 @@
 # Specify the interface name through which the mobile traffic can be sniffed
 CAPTURE_INTERFACE = 'wlp4s0'
+
+# The specification of the android phones
+# The device names are determined using: `$ adb devices -l`, field model
+PHONES = [
+    {
+        'platform_name': 'Android',
+        'platform_version': '7.1',
+        'device_name': 'Nexus 5X'
+    },
+    {
+        'platform_name': 'Android',
+        'platform_version': '4.2',
+        'device_name': 'HUAWEI_Y330_U01'
+    }
+]

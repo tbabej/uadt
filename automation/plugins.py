@@ -28,9 +28,6 @@ class Plugin(LoggerMixin):
 
     __metaclass__ = PluginMount
 
-    platform_name = 'Android'
-    platform_version = '7.1'
-    device_name = 'Nexus 5X'
     app_package = None  # Must be provided
     app_activity = None  # Must be provided
     new_command_timeout = '50000'
