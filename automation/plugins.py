@@ -11,6 +11,7 @@ from appium import webdriver
 
 import config
 from logger import LoggerMixin
+from generator import DataGenerator
 
 class PluginMount(type):
 
@@ -63,6 +64,8 @@ class Plugin(LoggerMixin):
 
         # Configure generous implicit wait time (if manual action is needed)
         self.driver.implicitly_wait(60)
+
+        self.generator = DataGenerator()
 
         self.file_identifier = '{plugin_identifier}_{timestamp}'.format(**{
             'plugin_identifier': self.identifier,
