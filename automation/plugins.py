@@ -64,6 +64,8 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
         capabilities = generic_capabilities.copy()
         capabilities.update(config.PHONES[0])
 
+        self.debug("Initializing appium interface")
+
         self.driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
 
         # Configure generous implicit wait time (if manual action is needed)
@@ -73,6 +75,7 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
             capabilities = generic_capabilities.copy()
             capabilities.update(config.PHONES[1])
 
+            self.debug("Initializing second appium interface")
             self.driver2 = webdriver.Remote('http://localhost:4724/wd/hub', capabilities)
 
             # Configure generous implicit wait time (if manual action is needed)
@@ -103,7 +106,7 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
         args = shlex.split("tshark -l -n -T pdml -i {0} -w {1}"
                            .format(config.CAPTURE_INTERFACE, filename))
 
-        self.debug("Capturing script '{0}' to file '{1}'".format(
+        self.info("Capturing script '{0}' to file '{1}'".format(
             self.identifier,
             filename
         ))
@@ -137,6 +140,7 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
         Adds metadata element into the mark dictionary.
         """
 
+        self.debug("Adding metadata {0}='{1}'".format(key, value))
         self.metadata[key] = value
 
     @contextlib.contextmanager
@@ -150,12 +154,15 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
             - any metadata explicitly stored
         """
 
+        self.debug("Processing event: {0}".format(name))
+
         # Generate the timeout time
         timeout = timeout or (random.randint(1,5) + random.random())
 
         # Perform the marked event, capture start/end timestamps
         start = datetime.datetime.now()
         yield
+        self.debug("Phase out with timeout of {0:.2f} seconds".format(timeout))
         time.sleep(timeout)
         end = datetime.datetime.now()
 
