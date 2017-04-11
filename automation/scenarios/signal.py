@@ -22,7 +22,6 @@ class SignalScenario(Plugin):
         self.perform_user_dependent_events(OFFLINE_USER, False)
         self.perform_user_dependent_events(ONLINE_USER, True)
 
-
     def perform_user_dependent_events(self, user, delivered):
         """
         Performs all the logged actions that depend on the target user status
@@ -50,7 +49,9 @@ class SignalScenario(Plugin):
         s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/embedded_text_editor')
         with self.mark(delivered_suffix('send_regular_message')):
             s.click()
-            s.send_keys("This is an automated message. Please keep calm.\n")
+            text = self.generator.text() + "\n"
+            self.add_metadata('message_length', len(text))
+            s.send_keys(text)
             self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
 
         # Send picture
