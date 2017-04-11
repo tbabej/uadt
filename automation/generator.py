@@ -1,3 +1,5 @@
+import random
+
 from faker import Faker
 
 
@@ -7,4 +9,4 @@ class DataGenerator(object):
         self.faker = Faker(seed=seed)
 
     def text(self):
-        return self.faker.text()
+        return self.faker.text(max_nb_chars=random.randint(5, 70))
