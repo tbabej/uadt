@@ -24,9 +24,7 @@ class PluginMount(type):
             cls.plugins.append(cls)
 
 
-class Plugin(LoggerMixin):
-
-    __metaclass__ = PluginMount
+class Plugin(LoggerMixin, metaclass=PluginMount):
 
     app_package = None  # Must be provided
     app_activity = None  # Must be provided
