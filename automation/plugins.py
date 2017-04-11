@@ -1,6 +1,7 @@
 import datetime
 import contextlib
 import os
+import random
 import subprocess
 import shlex
 import time
@@ -122,7 +123,7 @@ class Plugin(LoggerMixin):
         self.metadata[key] = value
 
     @contextlib.contextmanager
-    def mark(self, name, timeout=5):
+    def mark(self, name, timeout=None):
         """
         Marks the event in the marks file.
         Captures:
@@ -131,6 +132,9 @@ class Plugin(LoggerMixin):
             - timeout used
             - any metadata explicitly stored
         """
+
+        # Generate the timeout time
+        timeout = timeout or (random.randint(1,5) + random.random())
 
         # Perform the marked event, capture start/end timestamps
         start = datetime.datetime.now()
