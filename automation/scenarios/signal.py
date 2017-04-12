@@ -1,3 +1,4 @@
+import random
 import time
 
 from appium import webdriver
