@@ -3,6 +3,7 @@ Usage: theater [-v] <scenario>
 """
 
 import importlib
+import sys
 from docopt import docopt
 
 from plugins import Plugin
@@ -52,8 +53,11 @@ class Theater(LoggerMixin):
         self.setup_logging(level='debug' if arguments['-v'] else 'info')
         self.import_plugins()
 
-        scenario = self.get_plugin(arguments['<scenario>'])()
+        scenario_cls = self.get_plugin(arguments['<scenario>'])
+        if scenario_cls is None:
+            sys.exit(1)
 
+        scenario = scenario_cls()
         self.info("Executing scenario: {0}".format(scenario.identifier))
         scenario.execute()
 
