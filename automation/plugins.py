@@ -89,7 +89,9 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
         })
 
         self.marks = []
-        self.metadata = {}
+
+        # Acts like a stack
+        self.metadata = []
 
     @contextlib.contextmanager
     def capture(self, timeout=5):
@@ -141,7 +143,7 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
         """
 
         self.debug("Adding metadata {0}='{1}'".format(key, value))
-        self.metadata[key] = value
+        self.metadata[-1][key] = value
 
     @contextlib.contextmanager
     def mark(self, name, timeout=None):
@@ -159,6 +161,9 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
         # Generate the timeout time
         timeout = timeout or (random.randint(1,5) + random.random())
 
+        # Prepare metadata store
+        self.metadata.append({})
+
         # Perform the marked event, capture start/end timestamps
         start = datetime.datetime.now()
         yield
@@ -173,10 +178,7 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
             'end': end.strftime("%Y-%m-%d %H:%M:%S.%f"),
             'timeout': timeout,
         }
-        mark_data.update(self.metadata)
+        mark_data.update(self.metadata.pop())
 
         # Save the generated mark data
         self.marks.append(mark_data)
-
-        # Reset metadata store
-        self.metadata = {}
