@@ -49,7 +49,7 @@ class SignalScenario(Plugin):
         s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/embedded_text_editor')
         with self.mark(delivered_suffix('send_regular_message')):
             s.click()
-            text = self.generator.text() + "\n"
+            text = self.generator.text()
             self.add_metadata('message_length', len(text))
             s.send_keys(text)
             self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
@@ -58,7 +58,10 @@ class SignalScenario(Plugin):
         s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
         with self.mark(delivered_suffix('send_image_no_caption')):
             s.click()
-            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/thumbnail').click()
+            self.driver.find_element_by_xpath(
+                    "//android.widget.FrameLayout[@index='{0}']"
+                    "/android.widget.ImageView".format(random.randint(0, 4)))
+                ).click()
             self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
             time.sleep(3)  # Extra sleep for transfer
 
