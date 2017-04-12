@@ -52,7 +52,10 @@ class SignalScenario(Plugin):
             text = self.generator.text()
             self.add_metadata('message_length', len(text))
             s.send_keys(text)
-            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
+
+            with self.mark('receive_regular_message'):
+                self.add_metadata('secondary', 'yes')  # Mark the important data stream
+                self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
 
         # Send picture
         s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
@@ -60,10 +63,13 @@ class SignalScenario(Plugin):
             s.click()
             self.driver.find_element_by_xpath(
                     "//android.widget.FrameLayout[@index='{0}']"
-                    "/android.widget.ImageView".format(random.randint(0, 4)))
+                    "/android.widget.ImageView".format(random.randint(0, 4))
                 ).click()
-            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
-            time.sleep(3)  # Extra sleep for transfer
+
+            with self.mark('receive_image_no_caption'):
+                self.add_metadata('secondary', 'yes')
+                self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
+                time.sleep(3)  # Extra sleep for transfer
 
         # Send location
         s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
@@ -72,8 +78,11 @@ class SignalScenario(Plugin):
             self.driver.find_element_by_id('org.thoughtcrime.securesms:id/location_button').click()
             self.driver.find_element_by_id('com.google.android.gms:id/select_marker_location').click()
             self.driver.find_element_by_id('com.google.android.gms:id/confirm_button').click()
-            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
-            time.sleep(3)  # Extra sleep for transfer
+
+            with self.mark('receive_location'):
+                self.add_metadata('secondary', 'yes')
+                self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
+                time.sleep(3)  # Extra sleep for transfer
 
         # Send GIF
         s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
@@ -81,8 +90,11 @@ class SignalScenario(Plugin):
             s.click()
             self.driver.find_element_by_id('org.thoughtcrime.securesms:id/giphy_button').click()
             self.driver.find_element_by_id('org.thoughtcrime.securesms:id/thumbnail').click()
-            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
-            time.sleep(2)  # Extra sleep for transfer
+
+            with self.mark('receive_gif'):
+                self.add_metadata('secondary', 'yes')
+                self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
+                time.sleep(2)  # Extra sleep for transfer
 
         # Press the back button (once to retract keyboard, once to go back)
         self.driver.press_keycode(4)
