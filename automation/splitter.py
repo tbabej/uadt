@@ -1,13 +1,14 @@
 import os
 import glob
 import subprocess
+import pyshark
 
 from joblib import Parallel, delayed
 
 CURRENT_MARKS = 28
 
 
-def split_file(marks_filename):
+def mark_split_file(marks_filename):
     pcap_filename = marks_filename.split('.')[0] + '.pcap'
 
     print("Processing {}".format(pcap_filename))
@@ -60,5 +61,71 @@ def split_file(marks_filename):
         if retcode != 0:
             print("Extraction of {0} unsuccessful".format(event_name))
 
+
+def auto_split_file(pcap_filename):
+    # Ignore retrasmissions
+    packets = pyshark.FileCapture(
+        pcap_filename,
+        display_filter='not tcp.analysis.retransmission and '
+                       'not tcp.analysis.fast_retransmission and '
+                       'not arp'
+    )
+
+    previous = None
+    interval_splits = []
+    for current in packets:
+        if not interval_splits:
+            interval_splits.append(current.sniff_time)
+
+        try:
+            sni = current.ssl.handshake_Extensions_server_name
+        except AttributeError:
+            sni = None
+
+        try:
+            dns = current.dns.qry_name if current.udp.dstport == 53 else None
+        except AttributeError:
+            dns = None
+
+        if previous is not None:
+            time_gap = current.sniff_time - previous.sniff_time
+            if time_gap.total_seconds() > 2:
+                print(current.sniff_time.strftime('%H:%M:%S'))
+                interval_splits.append(previous.sniff_time)
+
+        previous = current
+
+    interval_splits.append(current.sniff_time)
+
+    intervals = []
+    for index in range(len(interval_splits) - 1):
+        intervals.append((interval_splits[index], interval_splits[index+1]))
+
+    for interval_start, interval_end in intervals:
+        event_name = get_interval_allegiance(interval_start, interval_end, marks_file)
+
+        query = 'frame.time >= "{0}" and frame.time <= "{1}"'.format(
+            interval_start.strftime('%Y-%m-%d %H:%M:%S.%f'),
+            interval_end.strftime('%Y-%m-%d %H:%M:%S.%f')
+        )
+
+        # Generate the name for the output file
+        time_suffix = interval_end.strftime('%Y%m%d_%H%M%S')
+
+        output_filename = os.path.join(
+            'data_split',
+            event_name + '_' + time_suffix + '.pcap'
+        )
+
+        if os.path.exists(output_filename):
+            # This should not happen due to the fact that two events do not
+            # happen at the same time
+            output_filename = output_filename.split('.')[0] + '_1.pcap'
+
+        retcode = subprocess.call([
+            'tshark',
+            '-r', pcap_filename,
+            '-w', output_filename,
+            query])
 
 Parallel(n_jobs=4)(delayed(split_file)(marks_filename) for marks_filename in glob.glob('data/*.marks'))
