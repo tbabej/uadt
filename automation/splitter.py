@@ -59,6 +59,14 @@ class Splitter(PluginBase, metaclass=PluginMount):
 
         # Generate a separate file for each split interval
         for query, output_file in self.split_intervals():
+
+            # Skip already generated files
+            if os.path.exists(output_filename):
+                self.warn('File "{}" already exists. Skipping.'
+                          .format(output_file))
+                continue
+
+            # Perform the extraction
             retcode = subprocess.call([
                 'tshark',
                 '-r', pcap_filename,
@@ -101,11 +109,6 @@ class MarkSplitter(Splitter):
                 'data_split',
                 event['name'] + '_' + time_suffix + '.pcap'
             )
-
-            if os.path.exists(output_filename):
-                # This should not happen due to the fact that two events do not
-                # happen at the same time
-                output_filename = output_filename.split('.')[0] + '_1.pcap'
 
             yield query, output_filename
 
