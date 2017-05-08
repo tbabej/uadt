@@ -73,8 +73,8 @@ class Splitter(PluginBase, metaclass=PluginMount):
 
             # Skip already generated files
             if os.path.exists(output_filename):
-                self.warn('File "{}" already exists. Skipping.'
-                          .format(output_file))
+                self.warning('File "{}" already exists. Skipping.'
+                          .format(output_filename))
                 continue
 
             # Perform the extraction
