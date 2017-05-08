@@ -59,6 +59,7 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
             'newCommandTimeout': self.new_command_timeout,
             'autoLaunch' : self.auto_launch,
             'noReset': self.no_reset,
+            'automationName': "uiautomator2"
         }
 
         capabilities = generic_capabilities.copy()
