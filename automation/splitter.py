@@ -1,7 +1,26 @@
+#!/usr/bin/python3
+
+"""
+splitter - split a session PCAP file using different methods
+
+Usage:
+  splitter.py --method=<method> [--output-dir=<output_dir>] <file>...
+
+Options:
+  --method=<method>      Specify what method should be used to split the PCAP file.
+  --output-dir=<value>   The directory where to create splitted PCAP file segments [default: data_split].
+
+Examples:
+$ ./splitter.py --method marks data/*.pcap
+$ ./splitter.py --method auto --output-dir data_split data/*.pcap
+"""
+
 import abc
 import os
 import glob
 import subprocess
+
+import docopt
 import pyshark
 
 from joblib import Parallel, delayed
@@ -166,4 +185,11 @@ class AutoSplitter(Splitter):
                 query])
 
 
-Parallel(n_jobs=4)(delayed(split_file)(marks_filename) for marks_filename in glob.glob('data/*.marks'))
+def main(arguments):
+    print("Method to use: {}".format(arguments['--method']))
+    print("Files to process: {}".format(arguments['<file>']))
+    print("Output dir: {}".format(arguments['--output-dir']))
+
+if __name__ == '__main__':
+    arguments = docopt.docopt(__doc__)
+    main(arguments)
