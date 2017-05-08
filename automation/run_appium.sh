@@ -24,13 +24,12 @@ start_appium () {
     exit 2
   fi
 
-  if [[ ! -z `$ANDROID_HOME/platform-tools/adb devices | grep 'no permissions'` ]]
-  then
-    sudo $ANDROID_HOME/platform-tools/adb kill-server
-    sleep 2
-    sudo $ANDROID_HOME/platform-tools/adb start-server
-    sleep 2
-  fi
+  # Restart ADB server in any case
+  # Long running ADB server can exhaust its ports
+  sudo $ANDROID_HOME/platform-tools/adb kill-server
+  sleep 2
+  sudo $ANDROID_HOME/platform-tools/adb start-server
+  sleep 2
 
   if [[ -z `$ANDROID_HOME/platform-tools/adb devices | grep 'device'` ]]
   then
