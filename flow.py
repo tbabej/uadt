@@ -64,7 +64,7 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
 
         # Get OS and browser from the filename
         filename = os.path.basename(self.path)
-        class_parts = filename.split('_')[:-2]
+        class_parts = filename.split('-')[0].split('_')
         if class_parts[-1] in ('delivered', 'undelivered'):
             class_parts = class_parts[:-1]
 
