@@ -107,6 +107,18 @@ class Splitter(PluginBase, metaclass=PluginMount):
                     .format(event_name, pcap_filename, query)
                 )
 
+    def get_interval_allegiance(self, interval_start, interval_end):
+        """
+        Determines the most likely event associated with the given interval.
+        Algorithm:
+            - associate the event interval which has biggest overlap
+        """
+
+        def determine_overlap(e):
+            return min(e['end'], interval_end) - max(e['start'], interval_start)
+
+        return max(self.metadata, key=determine_overlap)['name']
+
     @abc.abstractmethod
     def split_intervals(self, filename):
         """
@@ -141,9 +153,6 @@ class AutoSplitter(Splitter):
     """
 
     identifier = 'auto'
-
-    def get_interval_allegiance(self, a,b,c):
-        return 'random'
 
     def split_intervals(self, pcap_filename):
         # Ignore retrasmissions
@@ -188,7 +197,7 @@ class AutoSplitter(Splitter):
             intervals.append((interval_splits[index], interval_splits[index+1]))
 
         for interval_start, interval_end in intervals:
-            event_name = self.get_interval_allegiance(interval_start, interval_end, 'marksfile')
+            event_name = self.get_interval_allegiance(interval_start, interval_end)
 
             query = 'frame.time >= "{0}" and frame.time <= "{1}"'.format(
                 interval_start.strftime('%Y-%m-%d %H:%M:%S.%f'),
