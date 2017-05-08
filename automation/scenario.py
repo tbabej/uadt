@@ -10,22 +10,11 @@ import json
 from appium import webdriver
 
 import config
-from logger import LoggerMixin
 from generator import DataGenerator
+from plugins import PluginBase, PluginMount
 
 
-class PluginMount(type):
-
-    def __init__(cls, name, bases, attrs):
-        super(PluginMount, cls).__init__(name, bases, attrs)
-
-        if not hasattr(cls, 'plugins'):
-            cls.plugins = []
-        else:
-            cls.plugins.append(cls)
-
-
-class Scenario(LoggerMixin, metaclass=PluginMount):
+class Scenario(PluginBase, metaclass=PluginMount):
 
     app_package = None  # Must be provided
     app_activity = None  # Must be provided
