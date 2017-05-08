@@ -76,6 +76,8 @@ class Splitter(PluginBase, metaclass=PluginMount):
                 self.warning('File "{}" already exists. Skipping.'
                           .format(output_filename))
                 continue
+            else:
+                self.debug('Splitting out "{}"'.format(output_filename))
 
             # Perform the extraction
             retcode = subprocess.call([
@@ -86,7 +88,11 @@ class Splitter(PluginBase, metaclass=PluginMount):
             ])
 
             if retcode != 0:
-                print("Extraction of {0} unsuccessful".format(event_name))
+                self.error(
+                    "Extraction of '{0}' event from '{1}' unsuccessful. "
+                    "Using query: {2}"
+                    .format(event_name, pcap_filename, query)
+                )
 
     @abc.abstractmethod
     def split_intervals(self, filename):
@@ -159,7 +165,10 @@ class AutoSplitter(Splitter):
             if previous is not None:
                 time_gap = current.sniff_time - previous.sniff_time
                 if time_gap.total_seconds() > 2:
-                    print(current.sniff_time.strftime('%H:%M:%S'))
+                    self.debug(
+                        "Identified interval split: {}".format(
+                        previous.sniff_time.strftime("%Y-%m-%d %H:%M:%S.%f")
+                    ))
                     interval_splits.append(previous.sniff_time)
 
             previous = current
@@ -199,6 +208,7 @@ def main(arguments):
 
     # Split each input file
     for filepath in filepaths:
+        splitter.info("Processing: '{}'".format(filepath))
         splitter.execute(filepath)
 
 
