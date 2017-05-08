@@ -12,6 +12,18 @@ start_appium () {
     sleep 3
   fi
 
+  if [[ ! -d $JAVA_HOME ]]
+  then
+    echo "JAVA HOME directory is not present"
+    exit 2
+  fi
+
+  if [[ ! -x $JAVA_HOME/bin/java ]]
+  then
+    echo "java binary is not present"
+    exit 2
+  fi
+
   if [[ ! -z `$ANDROID_HOME/platform-tools/adb devices | grep 'no permissions'` ]]
   then
     sudo $ANDROID_HOME/platform-tools/adb kill-server
