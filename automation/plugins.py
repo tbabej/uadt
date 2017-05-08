@@ -13,6 +13,7 @@ import config
 from logger import LoggerMixin
 from generator import DataGenerator
 
+
 class PluginMount(type):
 
     def __init__(cls, name, bases, attrs):
