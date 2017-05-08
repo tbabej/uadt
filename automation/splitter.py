@@ -16,9 +16,10 @@ $ ./splitter.py --method auto --output-dir data_split data/*.pcap
 """
 
 import abc
-import os
 import glob
+import json
 import subprocess
+import os
 
 import docopt
 import pyshark
