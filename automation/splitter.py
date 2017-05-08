@@ -192,6 +192,9 @@ def main(arguments):
     method = arguments['--method']
     filepaths = arguments['<file>']
 
+    # Setup logging
+    Splitter.setup_logging()
+
     # Obtain suitable splitter
     splitter_cls = Splitter.get_plugin(method)
     splitter = splitter_cls()
