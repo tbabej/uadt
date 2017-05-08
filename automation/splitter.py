@@ -40,27 +40,36 @@ class Splitter(PluginBase, metaclass=PluginMount):
         if not self.identifier:
             raise ValueError("Method idenfitier must be specified")
 
-    def execute(self, filename):
+    def execute(self, pcap_filename):
         """
         Wraps the splitting method with common error handling and metadata
         loading.
         """
 
-        if not filename.endswith('.pcap'):
+        if not pcap_filename.endswith('.pcap'):
             self.error('File "{}" is not a PCAP file. Skipping.'
-                       .format(filename))
+                       .format(pcap_filename))
             return
 
-        marks_path = '.'.join(filename.split('.')[:-1]) + '.marks'
+        marks_path = '.'.join(pcap_filename.split('.')[:-1]) + '.marks'
 
         # Load the marks file
         with open(marks_path, 'r') as marks_file:
             self.metadata = json.loads(marks_file.read())
 
-        self.split(filename)
+        # Generate a separate file for each split interval
+        for query, output_file in self.split_intervals():
+            retcode = subprocess.call([
+                'tshark',
+                '-r', pcap_filename,
+                '-w', output_filename,
+                query])
+
+            if retcode != 0:
+                print("Extraction of {0} unsuccessful".format(event_name))
 
     @abc.abstractmethod
-    def split(self, filename):
+    def split_intervals(self, filename):
         """
         Splits the session file into multiple segments.
         """
@@ -75,7 +84,7 @@ class MarkSplitter(Splitter):
 
     identifier = 'marks'
 
-    def split(pcap_filename):
+    def split_intervals(self, pcap_filename):
         # Process each event separately
         for event in self.metadata:
             query = 'frame.time >= "{0}" and frame.time <= "{1}"'.format(
@@ -98,14 +107,7 @@ class MarkSplitter(Splitter):
                 # happen at the same time
                 output_filename = output_filename.split('.')[0] + '_1.pcap'
 
-            retcode = subprocess.call([
-                'tshark',
-                '-r', pcap_filename,
-                '-w', output_filename,
-                query])
-
-            if retcode != 0:
-                print("Extraction of {0} unsuccessful".format(event_name))
+            yield query, output_filename
 
 
 class AutoSplitter(Splitter):
@@ -119,7 +121,7 @@ class AutoSplitter(Splitter):
     def get_interval_allegiance(self, a,b,c):
         return 'random'
 
-    def split(self, pcap_filename):
+    def split_intervals(self, pcap_filename):
         # Ignore retrasmissions
         packets = pyshark.FileCapture(
             pcap_filename,
@@ -174,16 +176,7 @@ class AutoSplitter(Splitter):
                 event_name + '_' + time_suffix + '.pcap'
             )
 
-            if os.path.exists(output_filename):
-                # This should not happen due to the fact that two events do not
-                # happen at the same time
-                output_filename = output_filename.split('.')[0] + '_1.pcap'
-
-            retcode = subprocess.call([
-                'tshark',
-                '-r', pcap_filename,
-                '-w', output_filename,
-                query])
+            yield query, output_filename
 
 
 def main(arguments):
