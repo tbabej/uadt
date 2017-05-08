@@ -39,6 +39,25 @@ class Splitter(PluginBase, metaclass=PluginMount):
         if not self.identifier:
             raise ValueError("Method idenfitier must be specified")
 
+    def execute(self, filename):
+        """
+        Wraps the splitting method with common error handling and metadata
+        loading.
+        """
+
+        if not filename.endswith('.pcap'):
+            self.error('File "{}" is not a PCAP file. Skipping.'
+                       .format(filename))
+            return
+
+        marks_path = '.'.join(filename.split('.')[:-1]) + '.marks'
+
+        # Load the marks file
+        with open(marks_path, 'r') as marks_file:
+            self.metadata = json.loads(marks_file.read())
+
+        self.split(filename)
+
     @abc.abstractmethod
     def split(self, filename):
         """
