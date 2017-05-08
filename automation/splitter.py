@@ -58,7 +58,7 @@ class Splitter(PluginBase, metaclass=PluginMount):
             self.metadata = json.loads(marks_file.read())
 
         # Generate a separate file for each split interval
-        for query, output_file in self.split_intervals():
+        for query, event_name, interval_end in self.split_intervals():
 
             # Skip already generated files
             if os.path.exists(output_filename):
@@ -66,12 +66,23 @@ class Splitter(PluginBase, metaclass=PluginMount):
                           .format(output_file))
                 continue
 
+            # Generate the name for the output file
+            output_filename = os.path.join(
+                'data_split',
+                ''.join(
+                    event_name,
+                    '-',
+                    interval_end.strftime('%Y%m%d_%H%M%S') + '.pcap'
+                )
+            )
+
             # Perform the extraction
             retcode = subprocess.call([
                 'tshark',
                 '-r', pcap_filename,
                 '-w', output_filename,
-                query])
+                query
+            ])
 
             if retcode != 0:
                 print("Extraction of {0} unsuccessful".format(event_name))
@@ -100,17 +111,8 @@ class MarkSplitter(Splitter):
                 event['end']
             )
 
-            # Generate the name for the output file
-            time_suffix = event['end'].replace('-', '')
-            time_suffix = time_suffix.replace(':', '')
-            time_suffix = time_suffix.replace(' ', '_').split('.')[0]
-
-            output_filename = os.path.join(
-                'data_split',
-                event['name'] + '_' + time_suffix + '.pcap'
-            )
-
-            yield query, output_filename
+            end_timestamp = event['end'].strftime("%Y-%m-%d %H:%M:%S.%f")
+            yield query, event['name'], end_timestamp
 
 
 class AutoSplitter(Splitter):
@@ -171,15 +173,7 @@ class AutoSplitter(Splitter):
                 interval_end.strftime('%Y-%m-%d %H:%M:%S.%f')
             )
 
-            # Generate the name for the output file
-            time_suffix = interval_end.strftime('%Y%m%d_%H%M%S')
-
-            output_filename = os.path.join(
-                'data_split',
-                event_name + '_' + time_suffix + '.pcap'
-            )
-
-            yield query, output_filename
+            yield query, event_name, interval_end
 
 
 def main(arguments):
