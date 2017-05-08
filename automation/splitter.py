@@ -36,7 +36,7 @@ class Splitter(PluginBase, metaclass=PluginMount):
     identifier = None
 
     def __init__(self):
-        if not self.method:
+        if not self.identifier:
             raise ValueError("Method idenfitier must be specified")
 
     @abc.abstractmethod
