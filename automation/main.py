@@ -4,6 +4,7 @@ Usage: theater [-v] <scenario>
 
 import importlib
 import sys
+
 from docopt import docopt
 
 from scenario import Scenario
@@ -11,29 +12,16 @@ from logger import LoggerMixin
 
 
 class Theater(LoggerMixin):
-
-    @property
-    def plugins(self):
-        """
-        Returns a dictionary of plugins available.
-        """
-
-        return {
-            plugin_class.identifier: plugin_class
-            for plugin_class in Plugin.plugins
-        }
-
-    def get_plugin(self, identifier):
-        """
-        Returns a plugin class corresponding to the given identifier.
-        """
-
-        try:
-            return self.plugins[identifier]
-        except KeyError:
-            self.error('Scenario "{0}" is not available'.format(identifier))
+    """
+    A tool that takes care of executing scenarios and performing necessary
+    setup.
+    """
 
     def import_plugins(self):
+        """
+        Robustly import all available scenario plugins.
+        """
+
         import scenarios
 
         # pylint: disable=broad-except
@@ -53,7 +41,7 @@ class Theater(LoggerMixin):
         self.setup_logging(level='debug' if arguments['-v'] else 'info')
         self.import_plugins()
 
-        scenario_cls = self.get_plugin(arguments['<scenario>'])
+        scenario_cls = Scenario.get_plugin(arguments['<scenario>'])
         if scenario_cls is None:
             sys.exit(1)
 
