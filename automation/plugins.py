@@ -126,7 +126,7 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
                            'the scenario, removing session PCAP file: {}'
                            .format(filename))
                 p.terminate()
-                with contextlib.supress(FileNotFoundError):
+                with contextlib.suppress(FileNotFoundError):
                     os.remove(filename)
                 raise
 
