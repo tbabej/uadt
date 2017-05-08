@@ -139,15 +139,14 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
         Used to wrap scenario run, performing necessary pre and post actions.
         """
 
+        # Mark the start point and run the script
+        with self.capture():
+            self.run()
+
+        # Capture is over, process the marks now
         filename = os.path.join("data", self.file_identifier + '.marks')
 
         with open(filename, 'w') as mark_file:
-
-            # Mark the start point and run the script
-            with self.capture():
-                self.run()
-
-            # Capture is over, process the marks now
             mark_file.write(json.dumps(self.marks))
 
     def add_metadata(self, key, value):
