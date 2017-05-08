@@ -188,9 +188,22 @@ class AutoSplitter(Splitter):
 
 
 def main(arguments):
-    print("Method to use: {}".format(arguments['--method']))
-    print("Files to process: {}".format(arguments['<file>']))
-    print("Output dir: {}".format(arguments['--output-dir']))
+    output_dir = arguments['--output-dir']
+    method = arguments['--method']
+    filepaths = arguments['<file>']
+
+    # Obtain suitable splitter
+    splitter_cls = Splitter.get_plugin(method)
+    splitter = splitter_cls()
+
+    # Make sure target output dir exists
+    if not os.path.isdir(output_dir):
+        os.mkdir(output_dir)
+
+    # Split each input file
+    for filepath in filepaths:
+        splitter.split(filepath)
+
 
 if __name__ == '__main__':
     arguments = docopt.docopt(__doc__)
