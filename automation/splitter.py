@@ -74,43 +74,22 @@ class MarkSplitter(Splitter):
 
     identifier = 'marks'
 
-    def split(marks_filename):
-        pcap_filename = marks_filename.split('.')[0] + '.pcap'
-
-        print("Processing {}".format(pcap_filename))
-
-        with open(marks_filename) as marks_f:
-            marklines = list(marks_f.readlines())
-            marks_num = len(marklines)
-
-        if marks_num != 28:
-            print("Invalid number of marks, skipping.")
-
-        for mark_index in range(marks_num/2):
-            start_line = marklines[2*mark_index]
-            end_line = marklines[2*mark_index+1]
-
-            start_line_parts = start_line.split(' ')
-            end_line_parts = end_line.split(' ')
-
-            start_timestamp = ' '.join(start_line_parts[:2])
-            end_timestamp = ' '.join(end_line_parts[:2])
-
-            event_name = '_'.join(start_line_parts[-1].strip().split('_')[1:])
-
+    def split(pcap_filename):
+        # Process each event separately
+        for event in self.metadata:
             query = 'frame.time >= "{0}" and frame.time <= "{1}"'.format(
-                start_timestamp,
-                end_timestamp
+                event['start'],
+                event['end']
             )
 
             # Generate the name for the output file
-            time_suffix = end_timestamp.replace('-', '')
+            time_suffix = event['end'].replace('-', '')
             time_suffix = time_suffix.replace(':', '')
             time_suffix = time_suffix.replace(' ', '_').split('.')[0]
 
             output_filename = os.path.join(
                 'data_split',
-                event_name + '_' + time_suffix + '.pcap'
+                event['name'] + '_' + time_suffix + '.pcap'
             )
 
             if os.path.exists(output_filename):
