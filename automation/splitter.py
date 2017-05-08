@@ -25,13 +25,15 @@ import pyshark
 
 from joblib import Parallel, delayed
 
+from plugins import PluginBase, PluginMount
 
-class Splitter(object):
+
+class Splitter(PluginBase, metaclass=PluginMount):
     """
     An object that represents a mechanism for splitting a session PCAP file.
     """
 
-    method = None
+    identifier = None
 
     def __init__(self):
         if not self.method:
@@ -51,7 +53,7 @@ class MarkSplitter(Splitter):
     beggining and end of each particular event.
     """
 
-    method = 'marks'
+    identifier = 'marks'
 
     def split(marks_filename):
         pcap_filename = marks_filename.split('.')[0] + '.pcap'
@@ -113,7 +115,7 @@ class AutoSplitter(Splitter):
     beggining and end of a possible event in the PCAP session file.
     """
 
-    method = 'auto'
+    identifier = 'auto'
 
     def get_interval_allegiance(self, a,b,c):
         return 'random'
