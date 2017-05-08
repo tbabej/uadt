@@ -16,6 +16,7 @@ $ ./splitter.py --method auto --output-dir data_split data/*.pcap
 """
 
 import abc
+import datetime
 import glob
 import json
 import subprocess
@@ -58,23 +59,23 @@ class Splitter(PluginBase, metaclass=PluginMount):
             self.metadata = json.loads(marks_file.read())
 
         # Generate a separate file for each split interval
-        for query, event_name, interval_end in self.split_intervals():
+        for query, event_name, event_end in self.split_intervals(pcap_filename):
+
+            # Generate the name for the output file
+            output_filename = os.path.join(
+                'data_split',
+                ''.join([
+                    event_name,
+                    '-',
+                    event_end.strftime('%Y%m%d_%H%M%S') + '.pcap'
+                ])
+            )
 
             # Skip already generated files
             if os.path.exists(output_filename):
                 self.warn('File "{}" already exists. Skipping.'
                           .format(output_file))
                 continue
-
-            # Generate the name for the output file
-            output_filename = os.path.join(
-                'data_split',
-                ''.join(
-                    event_name,
-                    '-',
-                    interval_end.strftime('%Y%m%d_%H%M%S') + '.pcap'
-                )
-            )
 
             # Perform the extraction
             retcode = subprocess.call([
@@ -111,7 +112,11 @@ class MarkSplitter(Splitter):
                 event['end']
             )
 
-            end_timestamp = event['end'].strftime("%Y-%m-%d %H:%M:%S.%f")
+            end_timestamp = datetime.datetime.strptime(
+                event['end'],
+                "%Y-%m-%d %H:%M:%S.%f"
+            )
+
             yield query, event['name'], end_timestamp
 
 
