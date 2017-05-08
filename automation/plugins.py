@@ -162,7 +162,7 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
         self.debug("Processing event: {0}".format(name))
 
         # Generate the timeout time
-        timeout = timeout or (random.randint(1,5) + random.random())
+        timeout = timeout or (random.randint(2,6) + random.random())
 
         # Prepare metadata store
         self.metadata.append({})
