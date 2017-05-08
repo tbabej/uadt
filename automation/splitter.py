@@ -4,11 +4,12 @@
 splitter - split a session PCAP file using different methods
 
 Usage:
-  splitter.py --method=<method> [--output-dir=<output_dir>] <file>...
+  splitter.py --method=<method> [--parallel=TRUE] [--output-dir=<output_dir>] <file>...
 
 Options:
   --method=<method>      Specify what method should be used to split the PCAP file.
   --output-dir=<value>   The directory where to create splitted PCAP file segments [default: data_split].
+  --parallel=<value>     Whether use multiple processes to split files [default: TRUE].
 
 Examples:
 $ ./splitter.py --method marks data/*.pcap
@@ -48,6 +49,8 @@ class Splitter(PluginBase, metaclass=PluginMount):
         Wraps the splitting method with common error handling and metadata
         loading.
         """
+
+        self.info("Processing: '{}'".format(pcap_filename))
 
         if not pcap_filename.endswith('.pcap'):
             self.error('File "{}" is not a PCAP file. Skipping.'
@@ -207,10 +210,16 @@ class AutoSplitter(Splitter):
             yield query, event_name, interval_end
 
 
+def process_file(cls, output_dir, path):
+    splitter = cls(output_dir)
+    splitter.execute(path)
+
+
 def main(arguments):
     output_dir = arguments['--output-dir']
     method = arguments['--method']
     filepaths = arguments['<file>']
+    parallel = arguments['--parallel']
 
     # Setup logging
     Splitter.setup_logging()
@@ -224,9 +233,11 @@ def main(arguments):
         os.mkdir(output_dir)
 
     # Split each input file
-    for filepath in filepaths:
-        splitter.info("Processing: '{}'".format(filepath))
-        splitter.execute(filepath)
+    if parallel:
+        Parallel(n_jobs=4)(delayed(process_file)(splitter_cls, output_dir, path) for path in filepaths)
+    else:
+        for filepath in filepaths:
+            splitter.execute(filepath)
 
 
 if __name__ == '__main__':
