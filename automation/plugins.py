@@ -116,11 +116,13 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
 
         with open(os.devnull, 'w') as f:
             p = subprocess.Popen(args, stdout=f, stderr=f)
-            yield
-            # Sleep so that network communication associated with the given
-            # action has time to happen
-            time.sleep(timeout)
-            p.terminate()
+            try:
+                yield
+            finally:
+                # Sleep so that network communication associated with the given
+                # action has time to happen
+                time.sleep(timeout)
+                p.terminate()
 
     def execute(self):
         """
