@@ -3,7 +3,7 @@ import time
 
 from appium import webdriver
 
-from plugins import Scenario
+from scenario import Scenario
 
 ONLINE_USER = "Kram"
 OFFLINE_USER = "Babej"
