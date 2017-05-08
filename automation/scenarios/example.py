@@ -1,8 +1,8 @@
-from plugins import Plugin
+from scenario import Scenario
 
 from appium import webdriver
 
-class TestScenario(Plugin):
+class TestScenario(Scenario):
     """
     A testing scenario for educational purposes.
     """

@@ -6,7 +6,7 @@ import importlib
 import sys
 from docopt import docopt
 
-from plugins import Plugin
+from scenario import Scenario
 from logger import LoggerMixin
 
 
