@@ -58,6 +58,17 @@ class Splitter(PluginBase, metaclass=PluginMount):
         with open(marks_path, 'r') as marks_file:
             self.metadata = json.loads(marks_file.read())
 
+        # Convert timestamps into datetime objects
+        for event in self.metadata:
+            event['start'] = datetime.datetime.strptime(
+                event['start'],
+                "%Y-%m-%d %H:%M:%S.%f"
+            )
+            event['end'] = datetime.datetime.strptime(
+                event['end'],
+                "%Y-%m-%d %H:%M:%S.%f"
+            )
+
         # Generate a separate file for each split interval
         for query, event_name, event_end in self.split_intervals(pcap_filename):
 
@@ -114,16 +125,11 @@ class MarkSplitter(Splitter):
         # Process each event separately
         for event in self.metadata:
             query = 'frame.time >= "{0}" and frame.time <= "{1}"'.format(
-                event['start'],
-                event['end']
+                event['start'].strftime("%Y-%m-%d %H:%M:%S.%f"),
+                event['end'].strftime("%Y-%m-%d %H:%M:%S.%f")
             )
 
-            end_timestamp = datetime.datetime.strptime(
-                event['end'],
-                "%Y-%m-%d %H:%M:%S.%f"
-            )
-
-            yield query, event['name'], end_timestamp
+            yield query, event['name'], event['end']
 
 
 class AutoSplitter(Splitter):
