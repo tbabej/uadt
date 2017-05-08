@@ -69,7 +69,11 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
             class_parts = class_parts[:-1]
 
         class_name = '_'.join(class_parts)
-        return CLASSES.get(class_name)
+        class_value = CLASSES.get(class_name)
+        if class_value is None:
+            print("Unable to determine class value for: {}".format(class_name))
+
+        return class_value
 
     def get_sni(self):
         sni_packet = pyshark.FileCapture(path,
