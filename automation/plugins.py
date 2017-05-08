@@ -118,11 +118,21 @@ class Plugin(LoggerMixin, metaclass=PluginMount):
             p = subprocess.Popen(args, stdout=f, stderr=f)
             try:
                 yield
-            finally:
-                # Sleep so that network communication associated with the given
-                # action has time to happen
-                time.sleep(timeout)
+            except Exception:
+                # In case any problem occurred during the execution of the
+                # scenario, remove associated pcap file
+                self.error('An exception occurred during the execution of'
+                           'the scenario, removing session PCAP file: {}'
+                           .format(filename))
                 p.terminate()
+                with contextlib.supress(FileNotFoundError):
+                    os.remove(filename)
+                raise
+
+            # Sleep so that network communication associated with the last
+            # action has time to happen
+            time.sleep(timeout)
+            p.terminate()
 
     def execute(self):
         """
