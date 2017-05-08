@@ -37,9 +37,11 @@ class Splitter(PluginBase, metaclass=PluginMount):
 
     identifier = None
 
-    def __init__(self):
+    def __init__(self, output_dir):
         if not self.identifier:
             raise ValueError("Method idenfitier must be specified")
+
+        self.output_dir = output_dir
 
     def execute(self, pcap_filename):
         """
@@ -74,7 +76,7 @@ class Splitter(PluginBase, metaclass=PluginMount):
 
             # Generate the name for the output file
             output_filename = os.path.join(
-                'data_split',
+                self.output_dir,
                 ''.join([
                     event_name,
                     '-',
@@ -206,7 +208,7 @@ def main(arguments):
 
     # Obtain suitable splitter
     splitter_cls = Splitter.get_plugin(method)
-    splitter = splitter_cls()
+    splitter = splitter_cls(output_dir)
 
     # Make sure target output dir exists
     if not os.path.isdir(output_dir):
