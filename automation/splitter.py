@@ -203,7 +203,7 @@ def main(arguments):
 
     # Split each input file
     for filepath in filepaths:
-        splitter.split(filepath)
+        splitter.execute(filepath)
 
 
 if __name__ == '__main__':
