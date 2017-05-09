@@ -21,6 +21,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
     new_command_timeout = '50000'
     auto_launch = True
     no_reset = True
+    automation_name = "uiautomator2"
 
     dual_phone = False
 
@@ -49,7 +50,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
             'newCommandTimeout': self.new_command_timeout,
             'autoLaunch' : self.auto_launch,
             'noReset': self.no_reset,
-            'automationName': "uiautomator2"
+            'automationName': self.automation_name
         }
 
         capabilities = generic_capabilities.copy()
