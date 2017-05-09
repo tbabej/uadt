@@ -13,16 +13,23 @@ Options:
 
 """
 
-from docopt import docopt
 
 import os
 import glob
+import multiprocessing
+
 import pandas
 
 from docopt import docopt
 
 from flow import Flow
 
+def process_pcap(path, path_index, files_count):
+    print('[{1}/{2}] Processing: {0}'
+          .format(path, path_index, files_count))
+    f = Flow(path)
+    if not f.data.empty:
+        return f.features
 
 def main(arguments):
     search_string = os.path.join(arguments['<directory>'], '*.pcap')
@@ -34,44 +41,19 @@ def main(arguments):
         size = int(size) * 1024 ** 2
         paths = list(filter(lambda p: os.path.getsize(p) < size, paths))
 
-    files_count = len(paths)
-
     # Determine the range of files to be processed
-    start = 0
-    end = files_count
+    pool = multiprocessing.Pool(8)
+    results = []
 
-    raw_data = []
-    failed = []
-    for counter, path in enumerate(paths[start:end]):
+    for counter, path in enumerate(paths):
         path_index = start + counter + 1
-        try:
-            print('[{1}/{2}] Processing: {0}'
-                  .format(path, path_index, files_count))
+        result = pool.apply_async(process_pcap, (path, path_index, files_count))
+        results.append(result)
 
-            f = Flow(path)
-            if not f.data.empty:
-                raw_data.append(f.features)
-            del f
-        except Exception as exp:
-            print('Processing failed: {}'.format(exp))
-            failed.append((path_index, path))
+    raw_data = list([r.get() for r in results if r.get() is not None])
 
-    # Unfortunatelly, trollius raises undeterministic errors
-    # Repeat until all files have been succesfully processed
-    while failed:
-        failed_again = []
-        for path_index, path in failed:
-            try:
-                print('[{1}/{2}] Processing: {0}'
-                      .format(path, path_index, files_count))
-
-                f = Flow(path)
-                raw_data.append(f.features)
-                del f
-            except Exception:
-                print('Processing failed')
-                failed_again.append((path_index, path))
-        failed = failed_again
+    pool.close()
+    pool.join()
 
     # Determining filename can be complicated
     directory_name = os.path.basename(arguments['<directory>'])
