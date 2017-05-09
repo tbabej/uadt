@@ -24,50 +24,99 @@ from docopt import docopt
 
 from flow import Flow
 
-def process_pcap(path, path_index, files_count):
-    print('[{1}/{2}] Processing: {0}'
-          .format(path, path_index, files_count))
-    f = Flow(path)
-    if not f.data.empty:
-        return f.features
 
-def main(arguments):
-    search_string = os.path.join(arguments['<directory>'], '*.pcap')
-    paths = list(sorted(glob.glob(search_string)))
-    files_count = len(paths)
+class DatasetProcessor(object):
+    """
+    A tool to for creation of data matrix from the annotated PCAP files.
+    """
 
-    # If asked to, ignore files bigger than max-size
-    size = arguments.get('--max-size')
-    if size:
-        size = int(size) * 1024 ** 2
-        paths = list(filter(lambda p: os.path.getsize(p) < size, paths))
+    def __init__(self, input_directory, output_file=None, max_size=None, parallel=True):
+        self.file_queue = self.paths_to_process(input_directory, max_size)
+        self.output = self.output_filename(input_directory, output_file)
+        self.parallel = parallel
 
-    # Determine the range of files to be processed
-    pool = multiprocessing.Pool(8)
-    results = []
+    @staticmethod
+    def paths_to_process(input_directory, max_size):
+        """
+        Returns a list of files that are to be processed. By default it
+        searches for all the PCAP files in the given input directory, that do
+        not exceed given maximum filesize.
+        """
 
-    for counter, path in enumerate(paths):
-        result = pool.apply_async(process_pcap, (path, counter + 1, files_count))
-        results.append(result)
+        search_string = os.path.join(input_directory, '*.pcap')
+        paths = list(sorted(glob.glob(search_string)))
 
-    raw_data = list([r.get() for r in results if r.get() is not None])
+        # If asked to, ignore files bigger than max-size
+        if max_size:
+            size = int(max_size) * 1024 ** 2
+            paths = list(filter(lambda p: os.path.getsize(p) < max_size, paths))
 
-    pool.close()
-    pool.join()
+        return paths
 
-    # Determining filename can be complicated
-    directory_name = os.path.basename(arguments['<directory>'])
-    if not directory_name:
-        directory_name = os.path.dirname(arguments['<directory>'])
-        directory_name = os.path.basename(directory_name)
-    filename = arguments['--outfile'] or '{0}.csv'.format(directory_name)
+    @staticmethod
+    def output_filename(input_directory, output_file):
+        """
+        Determines the filename of the output file. If no particular name was
+        specified at initialization, the output filename is derived from the
+        source folder.
+        """
 
-    # Write data out to file
-    print("Writing to " + filename)
-    data = pandas.DataFrame(raw_data)
-    data.to_csv(filename, header=True, mode='w')
+        if output_file:
+            return output_file
+        else:
+            directory_name = os.path.basename(input_directory)
+            if not directory_name:
+                directory_name = os.path.dirname(input_directory)
+                directory_name = os.path.basename(directory_name)
+            return '{0}.csv'.format(directory_name)
+
+    @staticmethod
+    def process_pcap(path, path_index, files_count):
+        """
+        Extracts feature vector for one particular PCAP file.
+        """
+
+        print('[{1}/{2}] Processing: {0}'.format(path, path_index, files_count))
+
+        f = Flow(path)
+        if not f.data.empty:
+            return f.features
+
+    def process(self):
+        """
+        Processes the splitted PCAP files, extracting feature vector from each.
+        The implementation leverages a pool of processes provided my the
+        multiprocess module.
+        """
+
+        # Determine the range of files to be processed
+        pool = multiprocessing.Pool(8)
+        results = []
+
+        queue_length = len(self.file_queue)
+
+        for counter, path in enumerate(self.file_queue):
+            result = pool.apply_async(
+                self.process_pcap,
+                (path, counter + 1, queue_length)
+            )
+            results.append(result)
+
+        raw_data = list([r.get() for r in results if r.get() is not None])
+
+        pool.close()
+        pool.join()
+
+        data = pandas.DataFrame(raw_data)
+        data.to_csv(self.output, header=True, mode='w')
 
 
 if __name__ == '__main__':
     arguments = docopt(__doc__)
-    main(arguments)
+    processor = DatasetProcessor(
+        arguments['<directory>'],
+        arguments['--outfile'],
+        arguments['--max-size'],
+        arguments['--parallel']
+    )
+    processor.process()
