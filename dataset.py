@@ -4,12 +4,12 @@
 Dataset - generate the dataset out of directory with pcap files.
 
 Usage:
-  dataset.py <directory> [--outfile=<filename>] [--part=<spec>] [--max-size=<size>]
+  dataset.py <directory> [--parallel=TRUE] [--outfile=<filename>] [--max-size=<size>]
 
 Options:
   --outfile=<name>  The name of output .csv file (defaults to <directory>.csv).
   --max-size=<size>  The maximum pcap file size (in MBs).
-  --part=<num>  Specifies the part of the dataset to generate, see "Parts" section.
+  --parallel=<value> Specify if dataset generation should leverage multiple processes [default: TRUE].
 
 Parts:
 Part 1 represents processing of files 1..100.
@@ -32,6 +32,8 @@ import os
 import glob
 import pandas
 
+from docopt import docopt
+
 from flow import Flow
 
 
@@ -47,18 +49,10 @@ def main(arguments):
 
     files_count = len(paths)
 
-    part = arguments.get('--part')
-
     # Determine the range of files to be processed
-    if part:
-        part = int(part) * 100
-        start = max(part-100, 0)
-        end = min(part, files_count)
-    else:
-        start = 0
-        end = files_count
+    start = 0
+    end = files_count
 
-    # Extract features from selected files
     raw_data = []
     failed = []
     for counter, path in enumerate(paths[start:end]):
