@@ -34,6 +34,7 @@ def process_pcap(path, path_index, files_count):
 def main(arguments):
     search_string = os.path.join(arguments['<directory>'], '*.pcap')
     paths = list(sorted(glob.glob(search_string)))
+    files_count = len(paths)
 
     # If asked to, ignore files bigger than max-size
     size = arguments.get('--max-size')
@@ -46,8 +47,7 @@ def main(arguments):
     results = []
 
     for counter, path in enumerate(paths):
-        path_index = start + counter + 1
-        result = pool.apply_async(process_pcap, (path, path_index, files_count))
+        result = pool.apply_async(process_pcap, (path, counter + 1, files_count))
         results.append(result)
 
     raw_data = list([r.get() for r in results if r.get() is not None])
