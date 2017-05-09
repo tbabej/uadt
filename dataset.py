@@ -11,19 +11,6 @@ Options:
   --max-size=<size>  The maximum pcap file size (in MBs).
   --parallel=<value> Specify if dataset generation should leverage multiple processes [default: TRUE].
 
-Parts:
-Part 1 represents processing of files 1..100.
-Part 2 represents processing of files 101..200.
-part n represents processing of files -1+(n-1)*100..n*100.
-
-If not first part is being processed, the outfile will be appended to.
-
-Use this option to hackishly parallelize dataset generation, by running in multiple terminals:
-$ for part in `seq 1 10`; do python dataset.py data --part $part; done
-$ for part in `seq 11 20`; do python dataset.py data --part $part; done
-$ for part in `seq 21 30`; do python dataset.py data --part $part; done
-...
-
 """
 
 from docopt import docopt
