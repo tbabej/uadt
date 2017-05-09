@@ -96,10 +96,7 @@ def main(arguments):
     # Write data out to file
     print("Writing to " + filename)
     data = pandas.DataFrame(raw_data)
-    if start == 0:
-        data.to_csv(filename, header=True, mode='w')
-    else:
-        data.to_csv(filename, header=False, mode='a')
+    data.to_csv(filename, header=True, mode='w')
 
 
 if __name__ == '__main__':
