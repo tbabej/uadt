@@ -96,14 +96,19 @@ class Splitter(PluginBase, metaclass=PluginMount):
                 self.debug('Splitting out "{}"'.format(output_filename))
 
             # Perform the extraction
-            retcode = subprocess.call([
-                'tshark',
-                '-r', pcap_filename,
-                '-w', output_filename,
-                query
-            ])
-
-            if retcode != 0:
+            try:
+                subprocess.run(
+                    [
+                        'tshark',
+                        '-r', pcap_filename,
+                        '-w', output_filename,
+                        query
+                    ],
+                    check=True,
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+            except subprocess.CalledProcessError:
                 self.error(
                     "Extraction of '{0}' event from '{1}' unsuccessful. "
                     "Using query: {2}"
