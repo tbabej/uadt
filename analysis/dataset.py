@@ -23,7 +23,7 @@ import pebble
 from concurrent.futures import TimeoutError
 from docopt import docopt
 
-import config
+from .. import config
 from flow import Flow
 
 

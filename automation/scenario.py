@@ -9,7 +9,7 @@ import json
 
 from appium import webdriver
 
-import config
+from .. import config
 from generator import DataGenerator
 from plugins import PluginBase, PluginMount
 

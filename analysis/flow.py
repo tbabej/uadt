@@ -4,7 +4,7 @@ import pandas
 import pprint
 
 from features import ForwardFeatures, BackwardFeatures, GlobalFeatures
-from constants import CLASSES
+from .. import constants
 
 LOCAL_IP = '10.42.0.71'
 
@@ -69,7 +69,7 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
             class_parts = class_parts[:-1]
 
         class_name = '_'.join(class_parts)
-        class_value = CLASSES.get(class_name)
+        class_value = constants.CLASSES.get(class_name)
         if class_value is None:
             print("Unable to determine class value for: {}".format(class_name))
 

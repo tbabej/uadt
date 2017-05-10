@@ -27,7 +27,7 @@ import docopt
 import pyshark
 from joblib import Parallel, delayed
 
-import config
+from .. import config
 from plugins import PluginBase, PluginMount
 
 
