@@ -96,6 +96,8 @@ class Splitter(PluginBase, metaclass=PluginMount):
                 self.debug('Splitting out "{}"'.format(output_filename))
 
             # Perform the extraction
+            env = os.environ.copy()
+            env['TZ'] = 'UTC'
             try:
                 subprocess.run(
                     [
@@ -106,7 +108,8 @@ class Splitter(PluginBase, metaclass=PluginMount):
                     ],
                     check=True,
                     stdout=subprocess.DEVNULL,
-                    stderr=subprocess.DEVNULL
+                    stderr=subprocess.DEVNULL,
+                    env=env
                 )
             except subprocess.CalledProcessError:
                 self.error(
