@@ -67,11 +67,11 @@ class Splitter(PluginBase, metaclass=PluginMount):
         for event in self.metadata:
             event['start'] = datetime.datetime.strptime(
                 event['start'],
-                "%Y-%m-%d %H:%M:%S.%f"
+                "%Y-%m-%d %H:%M:%S.%f UTC"
             )
             event['end'] = datetime.datetime.strptime(
                 event['end'],
-                "%Y-%m-%d %H:%M:%S.%f"
+                "%Y-%m-%d %H:%M:%S.%f UTC"
             )
 
         # Generate a separate file for each split interval

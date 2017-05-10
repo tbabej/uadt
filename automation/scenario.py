@@ -77,7 +77,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
         self.file_identifier = '{plugin_identifier}_{timestamp}'.format(**{
             'plugin_identifier': self.identifier,
-            'timestamp': datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            'timestamp': datetime.datetime.utcnow().strftime("%Y%m%d_%H%M%S")
         })
 
         self.marks = []
@@ -168,17 +168,17 @@ class Scenario(PluginBase, metaclass=PluginMount):
         self.metadata.append({})
 
         # Perform the marked event, capture start/end timestamps
-        start = datetime.datetime.now()
+        start = datetime.datetime.utcnow()
         yield
         self.debug("Phase out with timeout of {0:.2f} seconds".format(timeout))
         time.sleep(timeout)
-        end = datetime.datetime.now()
+        end = datetime.datetime.utcnow()
 
         # Generate mark data
         mark_data = {
             'name': name,
-            'start': start.strftime("%Y-%m-%d %H:%M:%S.%f"),
-            'end': end.strftime("%Y-%m-%d %H:%M:%S.%f"),
+            'start': start.strftime("%Y-%m-%d %H:%M:%S.%f UTC"),
+            'end': end.strftime("%Y-%m-%d %H:%M:%S.%f UTC"),
             'timeout': timeout,
         }
         mark_data.update(self.metadata.pop())
