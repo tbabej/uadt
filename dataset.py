@@ -82,6 +82,8 @@ class DatasetProcessor(object):
         f = Flow(path)
         if not f.data.empty:
             return f.features
+        else:
+            print("Warning: Flow '{0}' is empty".format(path))
 
     def process(self):
         """
