@@ -17,11 +17,13 @@ $ python svm.py data1000.csv --optimize --train=0.8
 $ python svm.py data1000.csv -C 512 --gamma 0.5
 """
 
+import pandas
+import numpy
 from docopt import docopt
 from sklearn import svm, model_selection, preprocessing
 from joblib import Parallel, delayed
-import pandas
-import numpy
+
+import config
 
 
 class Machine(object):
@@ -94,9 +96,11 @@ class Machine(object):
         C_candidates = [2.0**(2*p-1) for p in range(-2, 9)]
         gamma_candidates = [2.0**(2*p-1) for p in range(-8, 3)]
 
-        rates = Parallel(n_jobs=8)(delayed(self.test_parameters)(C, gamma)
-                                   for C in C_candidates
-                                   for gamma in gamma_candidates)
+        rates = Parallel(n_jobs=config.NUM_JOBS)(
+            delayed(self.test_parameters)(C, gamma)
+            for C in C_candidates
+            for gamma in gamma_candidates
+        )
 
         _, self.C, self.gamma = max(rates)
 

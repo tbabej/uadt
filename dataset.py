@@ -22,6 +22,7 @@ import pandas
 
 from docopt import docopt
 
+import config
 from flow import Flow
 
 
@@ -90,7 +91,7 @@ class DatasetProcessor(object):
         """
 
         # Determine the range of files to be processed
-        pool = multiprocessing.Pool(8)
+        pool = multiprocessing.Pool(config.NUM_JOBS)
         results = []
 
         queue_length = len(self.file_queue)

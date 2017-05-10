@@ -1,6 +1,10 @@
 # Specify the interface name through which the mobile traffic can be sniffed
 CAPTURE_INTERFACE = 'wlp4s0'
 
+# Override this if you want to use a different number of parallel jobs
+import multiprocessing
+NUM_JOBS = multiprocessing.cpu_count()
+
 # The specification of the android phones
 # The device names are determined using: `$ adb devices -l`, field model
 PHONES = [

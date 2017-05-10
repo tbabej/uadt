@@ -25,9 +25,9 @@ import os
 
 import docopt
 import pyshark
-
 from joblib import Parallel, delayed
 
+import config
 from plugins import PluginBase, PluginMount
 
 
@@ -242,7 +242,10 @@ def main(arguments):
 
     # Split each input file
     if parallel:
-        Parallel(n_jobs=4)(delayed(process_file)(splitter_cls, output_dir, path) for path in filepaths)
+        Parallel(n_jobs=config.NUM_JOBS)(
+            delayed(process_file)(splitter_cls, output_dir, path)
+            for path in filepaths
+        )
     else:
         for filepath in filepaths:
             splitter.execute(filepath)
