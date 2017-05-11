@@ -16,7 +16,6 @@ Options:
 
 import os
 import glob
-import multiprocessing
 
 import pandas
 import pebble
@@ -93,7 +92,7 @@ class DatasetProcessor(object):
         """
         Processes the splitted PCAP files, extracting feature vector from each.
         The implementation leverages a pool of processes provided my the
-        multiprocess module.
+        pebble module.
         """
 
         # Determine the range of files to be processed
