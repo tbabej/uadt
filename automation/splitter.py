@@ -174,6 +174,7 @@ class AutoSplitter(Splitter):
                            'not arp'
         )
 
+        current = None
         previous = None
         interval_splits = []
         for current in packets:
@@ -200,6 +201,13 @@ class AutoSplitter(Splitter):
                     interval_splits.append(previous.sniff_time)
 
             previous = current
+
+        # Check if we inspected at least something
+        if current is None:
+            self.warning("PCAP file '{0}' contains no non-trivial "
+                         "packets".format(pcap_filename))
+            return
+
 
         interval_splits.append(current.sniff_time)
 
