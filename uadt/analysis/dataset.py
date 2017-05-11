@@ -113,7 +113,9 @@ class DatasetProcessor(object):
         raw_data = []
         for future in futures:
             try:
-                raw_data.append(future.result())
+                result = future.result()
+                if result is not None:
+                    raw_data.append(result)
             except TimeoutError:
                 pass
 
