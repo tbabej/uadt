@@ -79,11 +79,14 @@ class DatasetProcessor(object):
 
         print('[{1}/{2}] Processing: {0}'.format(path, path_index, files_count))
 
-        f = Flow(path)
-        if not f.data.empty:
-            return f.features
-        else:
-            print("Warning: Flow '{0}' is empty".format(path))
+        try:
+            f = Flow(path)
+            if not f.data.empty:
+                return f.features
+            else:
+                print("Warning: Flow '{0}' is empty".format(path))
+        except (Exception, AttributeError):
+            print("Data extraction from '{0}' failed".format(path))
 
     def process(self):
         """
