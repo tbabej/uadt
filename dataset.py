@@ -19,7 +19,7 @@ import glob
 import multiprocessing
 
 import pandas
-
+import pebble
 from docopt import docopt
 
 import config
@@ -93,19 +93,25 @@ class DatasetProcessor(object):
         """
 
         # Determine the range of files to be processed
-        pool = multiprocessing.Pool(config.NUM_JOBS)
-        results = []
+        futures = []
 
         queue_length = len(self.file_queue)
 
         for counter, path in enumerate(self.file_queue):
-            result = pool.apply_async(
-                self.process_pcap,
-                (path, counter + 1, queue_length)
-            )
-            results.append(result)
+            with pebble.ProcessPool(max_tasks=config.NUM_JOBS) as pool:
+                future = pool.schedule(
+                    self.process_pcap,
+                    (path, counter + 1, queue_length),
+                    timeout=1800,
+                )
+                futures.append(future)
 
-        raw_data = list([r.get() for r in results if r.get() is not None])
+        raw_data = []
+        for future in futures:
+            try:
+                raw_data.append(future.get())
+            except TimeoutError:
+                pass
 
         pool.close()
         pool.join()
