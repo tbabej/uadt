@@ -124,7 +124,7 @@ class DatasetProcessor(object):
         data.to_csv(self.output, header=True, mode='w')
 
 
-if __name__ == '__main__':
+def main():
     arguments = docopt(__doc__)
     processor = DatasetProcessor(
         arguments['<directory>'],
@@ -133,3 +133,7 @@ if __name__ == '__main__':
         arguments['--parallel']
     )
     processor.process()
+
+
+if __name__ == '__main__':
+    main()

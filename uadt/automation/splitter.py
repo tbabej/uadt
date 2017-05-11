@@ -231,7 +231,9 @@ def process_file(cls, output_dir, path):
     splitter.execute(path)
 
 
-def main(arguments):
+def main():
+    arguments = docopt.docopt(__doc__)
+
     output_dir = arguments['--output-dir']
     method = arguments['--method']
     filepaths = arguments['<file>']
@@ -260,5 +262,4 @@ def main(arguments):
 
 
 if __name__ == '__main__':
-    arguments = docopt.docopt(__doc__)
-    main(arguments)
+    main()

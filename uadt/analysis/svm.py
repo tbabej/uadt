@@ -117,7 +117,9 @@ class Machine(object):
         return rate
 
 
-def main(arguments):
+def main():
+    arguments = docopt(__doc__)
+
     machine = Machine(arguments['<dataset>'],
                       train_size=float(arguments['--train']))
     machine.prepare_data()
@@ -134,6 +136,4 @@ def main(arguments):
 
 
 if __name__ == '__main__':
-    arguments = docopt(__doc__)
-    main(arguments)
-
+    main()
