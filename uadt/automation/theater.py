@@ -5,6 +5,7 @@ Usage: theater [-v] <scenario>
 import importlib
 import multiprocessing
 import os
+import os.path
 import shlex
 import subprocess
 import sys
@@ -46,6 +47,12 @@ class Theater(LoggerMixin):
         env['JAVA_HOME'] = "/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-1.b12.fc25.x86_64/"
         env['PATH'] = env['PATH'] + ":/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-1.b12.fc25.x86_64/bin/"
         env['ANDROID_HOME'] = "/home/tbabej/Installed/Android/"
+
+        # Restart ADB server
+        adb = os.path.join(env['ANDROID_HOME'], 'platform-tools/adb')
+        subprocess.run(['sudo', adb, 'kill-server'])
+        subprocess.run(['sudo', adb, 'start-server'])
+
         process = subprocess.Popen(shlex.split('appium'), env=env)
         time.sleep(5)
         appium_ready.set()
