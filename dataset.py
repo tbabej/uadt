@@ -20,6 +20,7 @@ import multiprocessing
 
 import pandas
 import pebble
+from concurrent.futures import TimeoutError
 from docopt import docopt
 
 import config
