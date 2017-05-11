@@ -43,7 +43,8 @@ class Machine(object):
         parameter optimization.
         """
 
-        data = pandas.read_csv(self.path).dropna()
+        data = pandas.read_csv(self.path).fillna(0)
+        print("The size of data {0}".format(data.shape))
 
         X = data.drop('class', 1)
         y = data['class']
