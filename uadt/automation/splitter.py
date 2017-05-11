@@ -27,8 +27,8 @@ import docopt
 import pyshark
 from joblib import Parallel, delayed
 
-from .. import config
-from plugins import PluginBase, PluginMount
+from uadt import config
+from uadt.automation.plugins import PluginBase, PluginMount
 
 
 class Splitter(PluginBase, metaclass=PluginMount):

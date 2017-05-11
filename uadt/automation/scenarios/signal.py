@@ -3,7 +3,7 @@ import time
 
 from appium import webdriver
 
-from scenario import Scenario
+from uadt.automation.scenario import Scenario
 
 ONLINE_USER = "Kram"
 OFFLINE_USER = "Babej"

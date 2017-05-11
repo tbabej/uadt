@@ -3,8 +3,8 @@ import pyshark
 import pandas
 import pprint
 
-from features import ForwardFeatures, BackwardFeatures, GlobalFeatures
-from .. import constants
+from uadt.analysis.features import ForwardFeatures, BackwardFeatures, GlobalFeatures
+from uadt import constants
 
 LOCAL_IP = '10.42.0.71'
 

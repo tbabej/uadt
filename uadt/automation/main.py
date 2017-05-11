@@ -7,8 +7,8 @@ import sys
 
 from docopt import docopt
 
-from scenario import Scenario
-from logger import LoggerMixin
+from uadt.automation.scenario import Scenario
+from uadt.logger import LoggerMixin
 
 
 class Theater(LoggerMixin):
@@ -22,12 +22,12 @@ class Theater(LoggerMixin):
         Robustly import all available scenario plugins.
         """
 
-        import scenarios
+        import uadt.automation.scenarios as scenarios
 
         # pylint: disable=broad-except
         for module in scenarios.__all__:
             try:
-                module_id = "{0}.{1}".format('scenarios', module)
+                module_id = "{0}.{1}".format('uadt.automation.scenarios', module)
                 importlib.import_module(module_id)
                 self.debug(module_id + " loaded successfully.")
             except Exception as exc:

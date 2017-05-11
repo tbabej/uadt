@@ -23,8 +23,8 @@ import pebble
 from concurrent.futures import TimeoutError
 from docopt import docopt
 
-from .. import config
-from flow import Flow
+from uadt import config
+from uadt.analysis.flow import Flow
 
 
 class DatasetProcessor(object):

@@ -9,9 +9,9 @@ import json
 
 from appium import webdriver
 
-from .. import config
-from generator import DataGenerator
-from plugins import PluginBase, PluginMount
+from uadt import config
+from uadt.automation.generator import DataGenerator
+from uadt.automation.plugins import PluginBase, PluginMount
 
 
 class Scenario(PluginBase, metaclass=PluginMount):

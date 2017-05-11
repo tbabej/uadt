@@ -23,7 +23,7 @@ from docopt import docopt
 from sklearn import svm, model_selection, preprocessing
 from joblib import Parallel, delayed
 
-from .. import config
+from uadt import config
 
 
 class Machine(object):

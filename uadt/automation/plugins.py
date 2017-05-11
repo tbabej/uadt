@@ -1,4 +1,4 @@
-from logger import LoggerMixin
+from uadt.logger import LoggerMixin
 
 
 class PluginMount(type):

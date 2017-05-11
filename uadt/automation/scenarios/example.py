@@ -1,6 +1,7 @@
-from scenario import Scenario
-
 from appium import webdriver
+
+from uadt.automation.scenario import Scenario
+
 
 class TestScenario(Scenario):
     """
