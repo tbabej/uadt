@@ -86,9 +86,10 @@ class Theater(LoggerMixin):
 
         scenario = scenario_cls()
         self.info("Executing scenario: {0}".format(scenario.identifier))
-        scenario.execute()
-
-        scenario_finished.set()
+        try:
+            scenario.execute()
+        finally:
+            scenario_finished.set()
 
 
 def main():
