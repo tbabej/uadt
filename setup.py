@@ -27,6 +27,7 @@ setup(
             'uadt-splitter = uadt.automation.splitter:main',
             'uadt-dataset = uadt.analysis.dataset:main',
             'uadt-model-svm = uadt.analysis.svm:main',
+            'uadt-model-tree = uadt.analysis.tree:main',
         ]
     },
 )
