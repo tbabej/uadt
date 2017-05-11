@@ -23,7 +23,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'uadt-theater = uadt.automation.main:main',
+            'uadt-theater = uadt.automation.theater:main',
             'uadt-splitter = uadt.automation.splitter:main',
             'uadt-dataset = uadt.analysis.dataset:main',
             'uadt-model-svm = uadt.analysis.svm:main',

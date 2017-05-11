@@ -3,7 +3,12 @@ Usage: theater [-v] <scenario>
 """
 
 import importlib
+import multiprocessing
+import os
+import shlex
+import subprocess
 import sys
+import time
 
 from docopt import docopt
 
@@ -36,10 +41,37 @@ class Theater(LoggerMixin):
                     .format(module, str(exc)))
                 self.log_exception()
 
+    def initialize_appium(self, appium_ready, scenario_finished):
+        env = os.environ.copy()
+        env['JAVA_HOME'] = "/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-1.b12.fc25.x86_64/"
+        env['PATH'] = env['PATH'] + ":/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-1.b12.fc25.x86_64/bin/"
+        env['ANDROID_HOME'] = "/home/tbabej/Installed/Android/"
+        process = subprocess.Popen(shlex.split('appium'), env=env)
+        time.sleep(5)
+        appium_ready.set()
+        scenario_finished.wait()
+        self.info("Terminating now")
+        process.terminate()
+        time.sleep(3)
+
     def main(self):
         arguments = docopt(__doc__, version='theater')
         self.setup_logging(level='debug' if arguments['-v'] else 'info')
         self.import_plugins()
+
+        appium_ready = multiprocessing.Event()
+        scenario_finished = multiprocessing.Event()
+
+        appium = multiprocessing.Process(
+            target=self.initialize_appium,
+            args=(appium_ready, scenario_finished)
+        )
+        appium.start()
+
+        appium_ready.wait()
+        self.info("Appium is ready!")
+
+        time.sleep(5)
 
         scenario_cls = Scenario.get_plugin(arguments['<scenario>'])
         if scenario_cls is None:
@@ -48,6 +80,8 @@ class Theater(LoggerMixin):
         scenario = scenario_cls()
         self.info("Executing scenario: {0}".format(scenario.identifier))
         scenario.execute()
+
+        scenario_finished.set()
 
 
 def main():
