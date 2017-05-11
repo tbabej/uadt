@@ -100,8 +100,8 @@ class DatasetProcessor(object):
 
         queue_length = len(self.file_queue)
 
-        for counter, path in enumerate(self.file_queue):
-            with pebble.ProcessPool(max_tasks=config.NUM_JOBS) as pool:
+        with pebble.ProcessPool(max_workers=config.NUM_JOBS) as pool:
+            for counter, path in enumerate(self.file_queue):
                 future = pool.schedule(
                     self.process_pcap,
                     (path, counter + 1, queue_length),
@@ -112,7 +112,7 @@ class DatasetProcessor(object):
         raw_data = []
         for future in futures:
             try:
-                raw_data.append(future.get())
+                raw_data.append(future.result())
             except TimeoutError:
                 pass
 
