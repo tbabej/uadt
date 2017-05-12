@@ -105,8 +105,12 @@ class Theater(LoggerMixin):
 
         while True:
             port = random.randint(start, end)
-            if Theater.local_port_free(port):
+            if Theater._local_port_free(port):
                 return port
+            else:
+                print("Port {0} not free, trying a different one"
+                      .format(port))
+                sleep(1)
 
     def initialize_appium(self, appium_ready, scenario_finished):
         env = os.environ.copy()
@@ -121,7 +125,7 @@ class Theater(LoggerMixin):
 
         # Generate a random port to run the appium
         appium_ports = [
-            self._generate_random_free_port(4200, 4300)
+            self._generate_random_free_port(4700, 4800)
             for __ in range(self.devices)
         ]
         bootstrap_ports = [
