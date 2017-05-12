@@ -76,7 +76,8 @@ class Model(object):
         cm = metrics.confusion_matrix(self.y_test, self.y_predicted)
 
         classes = list(
-            [k for v, k in [(v, k) for k, v in constants.CLASSES.items()]]
+            [k for v, k in
+                sorted([(v, k) for k, v in constants.CLASSES.items()])]
         )
 
         # Preprocess the matrix data
