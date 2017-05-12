@@ -137,7 +137,7 @@ class Theater(LoggerMixin):
     def main(self):
         arguments = docopt(__doc__, version='theater')
 
-        repeat_count = int(arguments['-r'])
+        repeat_count = int(arguments['-r'] or 1)
 
         self.setup_logging(level='debug' if arguments['-v'] else 'info')
         self.import_plugins()
