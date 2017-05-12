@@ -174,7 +174,7 @@ class Theater(LoggerMixin):
 
         appium_ports = comm_queue.get()
 
-        scenario = scenario_cls()
+        scenario = scenario_cls(appium_ports, self.phones)
         self.info("Executing scenario: {0}".format(scenario.identifier))
         try:
             scenario.execute()
@@ -198,7 +198,7 @@ class Theater(LoggerMixin):
             sys.exit(1)
 
         self.devices = 2 if scenario_cls.dual_phone else 1
-        phones = self.select_phones(
+        self.phones = self.select_phones(
             arguments['--phone'],
         )
 
