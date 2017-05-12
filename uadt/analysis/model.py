@@ -124,3 +124,10 @@ class Model(object):
         rate = metrics.accuracy_score(self.y_test, self.y_predicted)
 
         return rate
+
+    def save(self, path):
+        """
+        Save the model at the given path.
+        """
+
+        joblib.dump(self.classifier, path)

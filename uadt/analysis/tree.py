@@ -4,11 +4,12 @@
 Tree - train and evaluate support vector machine on a given dataset.
 
 Usage:
-  tree.py <dataset> [--train=<fraction>] [--confusion]
+  tree.py <dataset> [--train=<fraction>] [--confusion] [--outfile=<path>]
 
 Options:
   --train=<fraction>  Specifies the portion of the data set that should be used for training [default: 0.7].
   --confusion         Displays the confusion matrix.
+  --outfile=<path>    Save the trained model at the given path.
 
 Examples:
 $ python tree.py data1000.csv
@@ -47,6 +48,10 @@ def main():
 
     if arguments.get('--confusion'):
         machine.plot_confusion_matrix()
+
+    outfile_path = arguments.get('--outfile')
+    if outfile_path:
+        machine.save(outfile_path)
 
 
 if __name__ == '__main__':

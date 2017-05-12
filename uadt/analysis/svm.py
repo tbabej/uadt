@@ -4,7 +4,7 @@
 SVM - train and evaluate support vector machine on a given dataset.
 
 Usage:
-  svm.py <dataset> (--optimize | -C=<value> --gamma=<value>) [--train=<fraction>] [--confusion]
+  svm.py <dataset> (--optimize | -C=<value> --gamma=<value>) [--train=<fraction>] [--confusion] [--outfile=<path>]
 
 Options:
   --optimize          Specify that SVM should find optimal parameters for C and gamma.
@@ -12,6 +12,7 @@ Options:
   --gamma=<value>     Manual value for gamma (must be used together with -C)
   --train=<fraction>  Specifies the portion of the data set that should be used for training [default: 0.7].
   --confusion         Displays the confusion matrix.
+  --outfile=<path>    Save the trained model at the given path.
 
 Examples:
 $ python svm.py data1000.csv --optimize --train=0.8
@@ -106,6 +107,10 @@ def main():
 
     if arguments.get('--confusion'):
         machine.plot_confusion_matrix()
+
+    outfile_path = arguments.get('--outfile')
+    if outfile_path:
+        machine.save(outfile_path)
 
 
 if __name__ == '__main__':
