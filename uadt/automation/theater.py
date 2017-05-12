@@ -112,7 +112,7 @@ class Theater(LoggerMixin):
                       .format(port))
                 sleep(1)
 
-    def initialize_appium(self, appium_ready, scenario_finished):
+    def initialize_appium(self, appium_ready, scenario_finished, comm_queue):
         env = os.environ.copy()
         env['JAVA_HOME'] = "/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-1.b12.fc25.x86_64/"
         env['PATH'] = env['PATH'] + ":/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-1.b12.fc25.x86_64/bin/"
@@ -133,6 +133,10 @@ class Theater(LoggerMixin):
             for __ in range(self.devices)
         ]
 
+        # Send the appium port numbers to the parent process
+        comm_queue.put(appium_ports)
+
+        # Initialize all the appium processes
         ports = zip(appium_ports, bootstrap_ports)
 
         appium_processes = []
@@ -146,6 +150,7 @@ class Theater(LoggerMixin):
             appium_processes.append(process)
 
         time.sleep(5)
+
         appium_ready.set()
         scenario_finished.wait()
 
@@ -156,17 +161,18 @@ class Theater(LoggerMixin):
     def execute_once(self, scenario_cls):
         appium_ready = multiprocessing.Event()
         scenario_finished = multiprocessing.Event()
+        comm_queue = multiprocessing.Queue()
 
         appium = multiprocessing.Process(
             target=self.initialize_appium,
-            args=(appium_ready, scenario_finished)
+            args=(appium_ready, scenario_finished, comm_queue)
         )
         appium.start()
 
         appium_ready.wait()
         self.info("Appium is ready!")
 
-        time.sleep(5)
+        appium_ports = comm_queue.get()
 
         scenario = scenario_cls()
         self.info("Executing scenario: {0}".format(scenario.identifier))
