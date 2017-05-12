@@ -49,7 +49,9 @@ class Live(object):
 
     def process(self, packet_list):
         flow = Flow(packet_list)
-        data = pandas.DataFrame([flow.features]).fillna(0).as_matrix()
+        features = flow.features
+        features.pop('class')
+        data = pandas.DataFrame([features]).fillna(0).as_matrix()
 
         event_id = self.evaluate(data)
         for key, value in constants.CLASSES.items():
