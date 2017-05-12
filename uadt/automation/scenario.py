@@ -25,7 +25,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
     dual_phone = False
 
-    def __init__(self):
+    def __init__(self, appium_ports, phones):
         """
         Initialize the plugin. Create Appium driver instance with required
         capabilities.
@@ -37,13 +37,6 @@ class Scenario(PluginBase, metaclass=PluginMount):
         if self.app_activity is None:
             raise ValueError("Startup activity name must be provided.")
 
-        if len(config.PHONES) < 1:
-            raise ValueError("Please configure at least one mobile device in config.py")
-
-        if self.dual_phone and len(config.PHONES) < 2:
-            raise ValueError("Scenario requires two mobile devices. Please "
-                             "configure at least two mobile devices in config.py")
-
         generic_capabilities = {
             'appPackage': self.app_package,
             'appActivity': self.app_activity,
@@ -54,21 +47,27 @@ class Scenario(PluginBase, metaclass=PluginMount):
         }
 
         capabilities = generic_capabilities.copy()
-        capabilities.update(config.PHONES[0])
+        capabilities.update(phones[0])
 
         self.debug("Initializing appium interface")
 
-        self.driver = webdriver.Remote('http://localhost:4723/wd/hub', capabilities)
+        self.driver = webdriver.Remote(
+            'http://localhost:{0}/wd/hub'.format(appium_ports[0]),
+            capabilities
+        )
 
         # Configure generous implicit wait time (if manual action is needed)
         self.driver.implicitly_wait(60)
 
         if self.dual_phone:
             capabilities = generic_capabilities.copy()
-            capabilities.update(config.PHONES[1])
+            capabilities.update(phones[1])
 
             self.debug("Initializing second appium interface")
-            self.driver2 = webdriver.Remote('http://localhost:4724/wd/hub', capabilities)
+            self.driver2 = webdriver.Remote(
+                'http://localhost:{0}/wd/hub'.format(appium_ports[1]),
+                capabilities
+            )
 
             # Configure generous implicit wait time (if manual action is needed)
             self.driver2.implicitly_wait(60)
