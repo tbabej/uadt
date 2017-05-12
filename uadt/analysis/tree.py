@@ -18,52 +18,21 @@ import pandas
 from docopt import docopt
 from sklearn import tree, model_selection
 
+from uadt.analysis.model import Model
 
-class Tree(object):
 
-    def __init__(self, path, train_size):
+class Tree(Model):
+    """
+    Provides the decision tree classifier.
+    """
+
+    def initialize_classifier(self):
         """
-        Initialize decision tree machinery giving it the dataset at path to crunch.
-        """
-
-        self.path = path
-        self.train_size = train_size
-
-    def prepare_data(self):
-        """
-        Reads, randomizes data from the given dataset and splits it into test
-        and training sets. Test data set is not used during training or
-        parameter optimization.
+        Initializes the classifier. Decision trees do not require any
+        hyperparamters.
         """
 
-        data = pandas.read_csv(self.path).fillna(0)
-        print("The size of data {0}".format(data.shape))
-
-        X = data.drop('class', 1)
-        y = data['class']
-
-        # Convert to numpy arrays and split in the wanted ratio
-        splitted = model_selection.train_test_split(
-                X.as_matrix(),
-                y.as_matrix(),
-                train_size=self.train_size
-        )
-
-        self.X_train = splitted[0]
-        self.X_test  = splitted[1]
-        self.y_train = splitted[2]
-        self.y_test  = splitted[3]
-
-    def evaluate(self):
-        """
-        Evaluates the decision tree on the training data set.
-        """
-
-        classifier = tree.DecisionTreeClassifier()
-        model = classifier.fit(self.X_train, self.y_train)
-        rate = model.score(self.X_test, self.y_test)
-
-        return rate
+        self.classifier = tree.DecisionTreeClassifier()
 
 
 def main():
@@ -72,6 +41,7 @@ def main():
     machine = Tree(arguments['<dataset>'],
                    train_size=float(arguments['--train']))
     machine.prepare_data()
+    machine.initialize_classifier()
 
     print("Success rate: {0}".format(machine.evaluate()))
 
