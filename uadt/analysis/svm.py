@@ -24,46 +24,12 @@ from sklearn import svm, model_selection, preprocessing
 from joblib import Parallel, delayed
 
 from uadt import config
+from uadt.analysis.model import Model
 
 
-class Machine(object):
+class Machine(Model):
 
-    def __init__(self, path, train_size):
-        """
-        Initialize SVM machinery giving it the dataset at path to crunch.
-        """
-
-        self.path = path
-        self.train_size = train_size
-
-    def prepare_data(self):
-        """
-        Reads, randomizes data from the given dataset and splits it into test
-        and training sets. Test data set is not used during training or
-        parameter optimization.
-        """
-
-        data = pandas.read_csv(self.path).fillna(0)
-        print("The size of data {0}".format(data.shape))
-
-        X = data.drop('class', 1)
-        y = data['class']
-
-        # Convert to numpy arrays and scale inputs
-        splitted = model_selection.train_test_split(
-                X.as_matrix(),
-                y.as_matrix(),
-                train_size=self.train_size
-        )
-
-        # Scaling of the test set has to be performed with the same scaling, as
-        # the data set of the training set, but the training set must not be
-        # taken into account
-        scaler = preprocessing.StandardScaler()
-        self.X_train = scaler.fit_transform(splitted[0])
-        self.X_test  = scaler.transform(splitted[1])
-        self.y_train = splitted[2]
-        self.y_test  = splitted[3]
+    scale_data = True
 
     def test_parameters(self, C, gamma):
         """
@@ -105,16 +71,16 @@ class Machine(object):
 
         _, self.C, self.gamma = max(rates)
 
-    def evaluate(self):
+    def initialize_classifier(self):
         """
-        Evaluates the SVM on the training data set.
+        Intializes the SVM with the determined hyperparameters.
         """
 
-        classifier = svm.SVC(C=self.C, gamma=self.gamma, decision_function_shape='ovr')
-        model = classifier.fit(self.X_train, self.y_train)
-        rate = model.score(self.X_test, self.y_test)
-
-        return rate
+        self.classifier = svm.SVC(
+            C=self.C,
+            gamma=self.gamma,
+            decision_function_shape='ovr'
+        )
 
 
 def main():
@@ -132,6 +98,9 @@ def main():
         machine.gamma = float(arguments.get('--gamma'))
 
     print("Used parameters: C={0}, gamma={1}".format(machine.C, machine.gamma))
+
+    machine.initialize_classifier()
+
     print("Success rate: {0}".format(machine.evaluate()))
 
 
