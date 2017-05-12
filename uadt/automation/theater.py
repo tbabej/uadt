@@ -57,7 +57,12 @@ class Theater(LoggerMixin):
         subprocess.run(['sudo', adb, 'kill-server'])
         subprocess.run(['sudo', adb, 'start-server'])
 
-        process = subprocess.Popen(shlex.split('appium'), env=env)
+        process = subprocess.Popen(
+                shlex.split('appium'),
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                env=env
+        )
         time.sleep(5)
         appium_ready.set()
         scenario_finished.wait()
