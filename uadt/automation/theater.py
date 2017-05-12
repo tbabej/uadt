@@ -84,6 +84,8 @@ class Theater(LoggerMixin):
         self.info("Executing scenario: {0}".format(scenario.identifier))
         try:
             scenario.execute()
+        except Exception as e:
+            self.debug(str(e))
         finally:
             scenario_finished.set()
 
