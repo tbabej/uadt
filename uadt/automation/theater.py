@@ -52,14 +52,14 @@ class Theater(LoggerMixin):
                     .format(module, str(exc)))
                 self.log_exception()
 
-    def select_phones(self, names, dual):
+    def select_phones(self, names):
         """
         Selects the phones from the configuration according to the CLI options.
         """
 
         names = names or []
 
-        if dual and len(names) <= 1:
+        if self.devices > 1 and len(names) <= 1:
             raise ValueError("Selected scenario requires two devices, "
                              "in such case you need to specify both.")
 
@@ -183,9 +183,9 @@ class Theater(LoggerMixin):
         if scenario_cls is None:
             sys.exit(1)
 
+        self.devices = 2 if scenario_cls.dual_phone else 1
         phones = self.select_phones(
             arguments['--phone'],
-            dual=scenario_cls.dual_phone
         )
 
         for __ in range(repeat_count):
