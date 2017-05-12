@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import abc
 import pandas
 import numpy
 from sklearn import svm, model_selection, preprocessing
@@ -55,13 +56,19 @@ class Model(object):
         self.y_train = splitted[2]
         self.y_test  = splitted[3]
 
+    @abc.abstractmethod
+    def initialize_classifier(self):
+        """
+        Initializes the classifier instance.
+        """
+        pass
+
     def evaluate(self):
         """
-        Evaluates the SVM on the training data set.
+        Evaluates the model on the training data set.
         """
 
-        classifier = svm.SVC(C=self.C, gamma=self.gamma, decision_function_shape='ovr')
-        model = classifier.fit(self.X_train, self.y_train)
+        model = self.classifier.fit(self.X_train, self.y_train)
         rate = model.score(self.X_test, self.y_test)
 
         return rate
