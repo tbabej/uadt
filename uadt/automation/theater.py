@@ -1,4 +1,4 @@
-n"""
+"""
 Usage: theater [-v] [-r <value>] [--phone=<name>] <scenario>
 
 Options:
