@@ -1,5 +1,5 @@
 """
-Usage: theater [-v] [-r <value>] [--phone=<name>] <scenario>
+Usage: theater [-v] [-r <value>] [--phone=<name>...] <scenario>
 
 Options:
     -v             Verbose.
