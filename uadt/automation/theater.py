@@ -104,6 +104,7 @@ class Theater(LoggerMixin):
 
         ports = itertools.zip(appium_ports, bootstrap_ports)
 
+        appium_processes = []
         for appium_port, bootstrap_port in ports:
             process = subprocess.Popen(
                 ['appium', '-p', str(appium_port), '-bp', str(bootstrap_port)],
@@ -111,13 +112,15 @@ class Theater(LoggerMixin):
                 stderr=subprocess.DEVNULL,
                 env=env
             )
+            appium_processes.append(process)
 
         time.sleep(5)
         appium_ready.set()
         scenario_finished.wait()
-        self.info("Terminating now")
-        process.terminate()
-        time.sleep(3)
+
+        self.info("Terminating all the Appium processes")
+        for process in appium_processes:
+            process.terminate()
 
     def execute_once(self, scenario_cls):
         appium_ready = multiprocessing.Event()
