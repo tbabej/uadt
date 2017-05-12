@@ -110,7 +110,7 @@ class Theater(LoggerMixin):
             else:
                 print("Port {0} not free, trying a different one"
                       .format(port))
-                sleep(1)
+                time.sleep(1)
 
     def initialize_appium(self, appium_ready, scenario_finished, comm_queue):
         env = os.environ.copy()
