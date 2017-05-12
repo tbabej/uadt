@@ -7,6 +7,7 @@ Options:
     --phone <name> Name of the device used to run the test. Does not need to be specified if only one device is connected.
 """
 
+import contextlib
 import importlib
 import itertools
 import multiprocessing
@@ -15,6 +16,7 @@ import os.path
 import random
 import shlex
 import subprocess
+import socket
 import sys
 import time
 
@@ -81,6 +83,27 @@ class Theater(LoggerMixin):
 
         return selected
 
+    @staticmethod
+    def _local_port_free(port):
+        """
+        Checks if the given port on localhost is free.
+        """
+
+        socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        with closing(socket) as s:
+            return s.connect_ex(('localhost', port)) == 0
+
+    @staticmethod
+    def _generate_random_free_port(start, end):
+        """
+        Generates a random port that is free to use (in the given interval).
+        """
+
+        while True:
+            port = random.randint(start, end)
+            if Theater.local_port_free(port):
+                return port
+
     def initialize_appium(self, appium_ready, scenario_finished):
         env = os.environ.copy()
         env['JAVA_HOME'] = "/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-1.b12.fc25.x86_64/"
@@ -94,11 +117,11 @@ class Theater(LoggerMixin):
 
         # Generate a random port to run the appium
         appium_ports = [
-            random.randint(4200, 4300)
+            self._generate_random_free_port(4200, 4300)
             for __ in range(self.devices)
         ]
         bootstrap_ports = [
-            random.randint(6500, 6600)
+            self._generate_random_free_port(6500, 6600)
             for __ in range(self.devices)
         ]
 
