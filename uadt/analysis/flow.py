@@ -15,15 +15,18 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
     Generates necessary features that will be used as inputs during classification.
     """
 
-    def __init__(self, path):
+    def __init__(self, packets, path=None):
         self.path = path
 
-        # Parse out pcap file using pyshark
-        self.packets = list(pyshark.FileCapture(path))
-
         # Extract basic data from the flow
-        packet_data = [self.parse_packet(p) for p in self.packets]
+        packet_data = [self.parse_packet(p) for p in packets]
         self.data = pandas.DataFrame(packet_data)
+
+    @classmethod
+    def from_path(cls, path):
+        # Parse out pcap file using pyshark
+        packets = list(pyshark.FileCapture(path))
+        return cls(packets, path=path)
 
     @staticmethod
     def parse_packet(packet):
@@ -61,6 +64,9 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
         Detect the class of the pcap file from the naming conventions. Detects
         application using SNI extension in the SSL handshake.
         """
+
+        if not self.path:
+            return
 
         # Get OS and browser from the filename
         filename = os.path.basename(self.path)

@@ -80,7 +80,7 @@ class DatasetProcessor(object):
         print('[{1}/{2}] Processing: {0}'.format(path, path_index, files_count))
 
         try:
-            f = Flow(path)
+            f = Flow.from_path(path)
             if not f.data.empty:
                 return f.features
             else:
