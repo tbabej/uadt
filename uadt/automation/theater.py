@@ -11,6 +11,7 @@ import importlib
 import multiprocessing
 import os
 import os.path
+import random
 import shlex
 import subprocess
 import sys
@@ -89,8 +90,12 @@ class Theater(LoggerMixin):
         subprocess.run(['sudo', adb, 'kill-server'])
         subprocess.run(['sudo', adb, 'start-server'])
 
+        # Generate a random port to run the appium
+        appium_port = random.randint(4200, 4300)
+        bootstrap_port = random.randint(6500, 6600)
+
         process = subprocess.Popen(
-                shlex.split('appium'),
+                ['appium', '-p', appium_port, '-bp', bootstrap_port],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 env=env
