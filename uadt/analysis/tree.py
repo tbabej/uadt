@@ -14,9 +14,8 @@ $ python tree.py data1000.csv
 $ python tree.py data1000.csv --train=0.8
 """
 
-import pandas
 from docopt import docopt
-from sklearn import tree, model_selection
+from sklearn import tree
 
 from uadt.analysis.model import Model
 
