@@ -122,7 +122,7 @@ class DatasetProcessor(object):
         pool.join()
 
         data = pandas.DataFrame(raw_data)
-        data.to_csv(self.output, header=True, mode='w')
+        data.to_csv(self.output, header=True, index=False, mode='w')
 
 
 def main():
