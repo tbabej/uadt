@@ -50,9 +50,11 @@ class Live(object):
     def process(self, packet_list):
         flow = Flow(packet_list)
         data = pandas.DataFrame([flow.features]).fillna(0).as_matrix()
-        print("Action detected: {0}".format(
-            constants.CLASSES.get(self.evaluate(data)
-        )))
+
+        event_id = self.evaluate(data)
+        for key, value in constants.CLASSES.items():
+            if value == event_id:
+                print("Action detected: {0}".format(key))
 
     def evaluate(self, X):
         """
