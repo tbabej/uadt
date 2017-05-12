@@ -9,7 +9,6 @@ Options:
 
 import contextlib
 import importlib
-import itertools
 import multiprocessing
 import os
 import os.path
@@ -125,7 +124,7 @@ class Theater(LoggerMixin):
             for __ in range(self.devices)
         ]
 
-        ports = itertools.zip(appium_ports, bootstrap_ports)
+        ports = zip(appium_ports, bootstrap_ports)
 
         appium_processes = []
         for appium_port, bootstrap_port in ports:
