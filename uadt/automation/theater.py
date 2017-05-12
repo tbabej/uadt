@@ -8,6 +8,7 @@ Options:
 """
 
 import importlib
+import itertools
 import multiprocessing
 import os
 import os.path
@@ -92,15 +93,25 @@ class Theater(LoggerMixin):
         subprocess.run(['sudo', adb, 'start-server'])
 
         # Generate a random port to run the appium
-        appium_port = random.randint(4200, 4300)
-        bootstrap_port = random.randint(6500, 6600)
+        appium_ports = [
+            random.randint(4200, 4300)
+            for __ in range(self.devices)
+        ]
+        bootstrap_ports = [
+            random.randint(6500, 6600)
+            for __ in range(self.devices)
+        ]
 
-        process = subprocess.Popen(
+        ports = itertools.zip(appium_ports, bootstrap_ports)
+
+        for appium_port, bootstrap_port in ports:
+            process = subprocess.Popen(
                 ['appium', '-p', str(appium_port), '-bp', str(bootstrap_port)],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 env=env
-        )
+            )
+
         time.sleep(5)
         appium_ready.set()
         scenario_finished.wait()
