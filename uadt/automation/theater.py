@@ -88,9 +88,14 @@ class Theater(LoggerMixin):
         Checks if the given port on localhost is free.
         """
 
-        socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        with closing(socket) as s:
-            return s.connect_ex(('localhost', port)) == 0
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        with contextlib.closing(sock) as s:
+            try:
+                s.bind(('localhost', port))
+                return True
+            except socket.error as e:
+                # 98 - port already in use
+                return e.errno != 98
 
     @staticmethod
     def _generate_random_free_port(start, end):
