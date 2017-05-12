@@ -1,5 +1,5 @@
 """
-Usage: theater [-v] [-r <value>] [--phone=<name>...] <scenario>
+Usage: theater [-v] [-r <value>] [--phone=<name>...] [--no-adb-reset] <scenario>
 
 Options:
     -v             Verbose.
@@ -112,16 +112,17 @@ class Theater(LoggerMixin):
                       .format(port))
                 time.sleep(1)
 
-    def initialize_appium(self, appium_ready, scenario_finished, comm_queue):
+    def initialize_appium(self, appium_ready, scenario_finished, comm_queue, adb_reset=True):
         env = os.environ.copy()
         env['JAVA_HOME'] = "/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-1.b12.fc25.x86_64/"
         env['PATH'] = env['PATH'] + ":/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-1.b12.fc25.x86_64/bin/"
         env['ANDROID_HOME'] = "/home/tbabej/Installed/Android/"
 
         # Restart ADB server
-        adb = os.path.join(env['ANDROID_HOME'], 'platform-tools/adb')
-        subprocess.run(['sudo', adb, 'kill-server'])
-        subprocess.run(['sudo', adb, 'start-server'])
+        if adb_reset:
+            adb = os.path.join(env['ANDROID_HOME'], 'platform-tools/adb')
+            subprocess.run(['sudo', adb, 'kill-server'])
+            subprocess.run(['sudo', adb, 'start-server'])
 
         # Generate a random port to run the appium
         appium_ports = [
@@ -165,7 +166,7 @@ class Theater(LoggerMixin):
 
         appium = multiprocessing.Process(
             target=self.initialize_appium,
-            args=(appium_ready, scenario_finished, comm_queue)
+            args=(appium_ready, scenario_finished, comm_queue, self.adb_reset)
         )
         appium.start()
 
@@ -197,6 +198,7 @@ class Theater(LoggerMixin):
         if scenario_cls is None:
             sys.exit(1)
 
+        self.adb_reset = not arguments.get('--no-adb-reset')
         self.devices = 2 if scenario_cls.dual_phone else 1
         self.phones = self.select_phones(
             arguments['--phone'],
