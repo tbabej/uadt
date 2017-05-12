@@ -96,7 +96,7 @@ class Theater(LoggerMixin):
         bootstrap_port = random.randint(6500, 6600)
 
         process = subprocess.Popen(
-                ['appium', '-p', appium_port, '-bp', bootstrap_port],
+                ['appium', '-p', str(appium_port), '-bp', str(bootstrap_port)],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 env=env
