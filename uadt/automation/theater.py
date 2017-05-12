@@ -1,9 +1,10 @@
 n"""
-Usage: theater [-v] [-r <value>]  <scenario>
+Usage: theater [-v] [-r <value>] [--phone=<name>] <scenario>
 
 Options:
     -v             Verbose.
     -r <value>     Repeat the execution of the scenario.
+    --phone <name> Name of the device used to run the test. Does not need to be specified if only one device is connected.
 """
 
 import importlib
@@ -45,6 +46,37 @@ class Theater(LoggerMixin):
                     "The scenarios.{0} module could not be loaded: {1} "
                     .format(module, str(exc)))
                 self.log_exception()
+
+    def select_phones(self, names, dual):
+        """
+        Selects the phones from the configuration according to the CLI options.
+        """
+
+        names = names or []
+
+        if dual and len(names) <= 1:
+            raise ValueError("Selected scenario requires two devices, "
+                             "in such case you need to specify both.")
+
+        selected = []
+
+        available_phones = {
+            phone['identifier']: phone
+            for phone in config.PHONES
+        }
+
+        for name in names:
+            phone = available_phones.get(name)
+
+            if phone is None:
+                raise ValueError("Configuration for phone '{0}' not found.")
+
+            selected.append(phone)
+
+        if not names:
+            selected.append(config.PHONES[0])
+
+        return selected
 
     def initialize_appium(self, appium_ready, scenario_finished):
         env = os.environ.copy()
@@ -99,7 +131,6 @@ class Theater(LoggerMixin):
     def main(self):
         arguments = docopt(__doc__, version='theater')
 
-        print(arguments)
         repeat_count = int(arguments['-r'])
 
         self.setup_logging(level='debug' if arguments['-v'] else 'info')
@@ -108,6 +139,11 @@ class Theater(LoggerMixin):
         scenario_cls = Scenario.get_plugin(arguments['<scenario>'])
         if scenario_cls is None:
             sys.exit(1)
+
+        phones = self.select_phones(
+            arguments['--phone'],
+            dual=scenario_cls.dual_phone
+        )
 
         for __ in range(repeat_count):
             self.execute_once(scenario_cls)
