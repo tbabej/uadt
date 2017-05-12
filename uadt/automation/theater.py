@@ -21,6 +21,7 @@ from docopt import docopt
 
 from uadt.automation.scenario import Scenario
 from uadt.logger import LoggerMixin
+from uadt import config
 
 
 class Theater(LoggerMixin):
