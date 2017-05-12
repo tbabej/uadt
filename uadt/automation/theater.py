@@ -1,5 +1,9 @@
-"""
-Usage: theater [-v] <scenario>
+n"""
+Usage: theater [-v] [-r <value>]  <scenario>
+
+Options:
+    -v             Verbose.
+    -r <value>     Repeat the execution of the scenario.
 """
 
 import importlib
@@ -61,11 +65,7 @@ class Theater(LoggerMixin):
         process.terminate()
         time.sleep(3)
 
-    def main(self):
-        arguments = docopt(__doc__, version='theater')
-        self.setup_logging(level='debug' if arguments['-v'] else 'info')
-        self.import_plugins()
-
+    def execute_once(self, scenario_cls):
         appium_ready = multiprocessing.Event()
         scenario_finished = multiprocessing.Event()
 
@@ -80,16 +80,30 @@ class Theater(LoggerMixin):
 
         time.sleep(5)
 
-        scenario_cls = Scenario.get_plugin(arguments['<scenario>'])
-        if scenario_cls is None:
-            sys.exit(1)
-
         scenario = scenario_cls()
         self.info("Executing scenario: {0}".format(scenario.identifier))
         try:
             scenario.execute()
         finally:
             scenario_finished.set()
+
+        time.sleep(4)
+
+    def main(self):
+        arguments = docopt(__doc__, version='theater')
+
+        print(arguments)
+        repeat_count = int(arguments['-r'])
+
+        self.setup_logging(level='debug' if arguments['-v'] else 'info')
+        self.import_plugins()
+
+        scenario_cls = Scenario.get_plugin(arguments['<scenario>'])
+        if scenario_cls is None:
+            sys.exit(1)
+
+        for __ in range(repeat_count):
+            self.execute_once(scenario_cls)
 
 
 def main():
