@@ -4,10 +4,11 @@
 Tree - train and evaluate support vector machine on a given dataset.
 
 Usage:
-  tree.py <dataset> [--train=<fraction>]
+  tree.py <dataset> [--train=<fraction>] [--confusion]
 
 Options:
   --train=<fraction>  Specifies the portion of the data set that should be used for training [default: 0.7].
+  --confusion         Displays the confusion matrix.
 
 Examples:
 $ python tree.py data1000.csv
@@ -43,6 +44,9 @@ def main():
     machine.initialize_classifier()
 
     print("Success rate: {0}".format(machine.evaluate()))
+
+    if arguments.get('--confusion'):
+        machine.plot_confusion_matrix()
 
 
 if __name__ == '__main__':
