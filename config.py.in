@@ -5,6 +5,9 @@ CAPTURE_INTERFACE = 'wlp4s0'
 import multiprocessing
 NUM_JOBS = multiprocessing.cpu_count()
 
+# Identify the prefixes of the local subnet where the capture happened
+LOCAL_SUBNETS = ['10.42.', '10.43.']
+
 # The specification of the android phones
 # The device names are determined using: `$ adb devices -l`, field model
 PHONES = [

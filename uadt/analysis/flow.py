@@ -5,8 +5,7 @@ import pprint
 
 from uadt.analysis.features import ForwardFeatures, BackwardFeatures, GlobalFeatures
 from uadt import constants
-
-LOCAL_SUBNETS = ['10.42.', '10.43.']
+from uadt import config
 
 
 class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
@@ -34,8 +33,11 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
             'size': int(packet.captured_length),
             'timestamp': float(packet.sniff_timestamp),
             'ttl': int(packet.ip.ttl if 'ip' in dir(packet) else 0),
-            'direction': ('forward' if any([packet.ip.src.startswith(subnet) for subnet in LOCAL_SUBNETS])
-                         else 'backward') if 'ip' in dir(packet) else 'forward'
+            'direction': (
+                'forward' if any([packet.ip.src.startswith(subnet)
+                                  for subnet in config.LOCAL_SUBNETS])
+                else 'backward')
+                if 'ip' in dir(packet) else 'forward'
         }
         return packet_data
 
