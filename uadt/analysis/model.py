@@ -3,11 +3,14 @@
 import abc
 import pandas
 import numpy
-from sklearn import svm, model_selection, preprocessing
+import itertools
+from matplotlib import pyplot as plt
+from sklearn import model_selection, preprocessing
+from sklearn import metrics
 from joblib import Parallel, delayed
 
 from uadt import config
-
+from uadt import constants
 
 class Model(object):
 
@@ -63,12 +66,60 @@ class Model(object):
         """
         pass
 
+    def plot_confusion_matrix(self, normalize=False):
+        """
+        This function plots the confusion matrix.
+        Normalization can be applied by setting `normalize=True`.
+        """
+
+        # Obtain confusion matrix data
+        cm = metrics.confusion_matrix(self.y_test, self.y_predicted)
+
+        classes = list(
+            [k for v, k in [(v, k) for k, v in constants.CLASSES.items()]]
+        )
+
+        # Preprocess the matrix data
+        if normalize:
+            cm = cm.astype('float') / cm.sum(axis=1)[:, numpy.newaxis]
+
+        label_color_threshold = cm.max() / 2.
+
+        # Plot the matrix
+        plt.figure()
+        plt.imshow(cm, interpolation='nearest', cmap=plt.cm.Blues)
+        plt.title("Confusion matrix")
+        plt.colorbar()
+
+        tick_marks = numpy.arange(len(classes))
+        plt.xticks(tick_marks, classes, rotation=45)
+        plt.yticks(tick_marks, classes)
+
+        plt.tight_layout()
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
+
+        matrix_coordinates = itertools.product(
+            range(cm.shape[0]),
+            range(cm.shape[1])
+        )
+
+        for i, j in matrix_coordinates:
+            plt.text(
+                j, i, cm[i, j],
+                horizontalalignment="center",
+                color="white" if cm[i, j] > label_color_threshold else "black"
+            )
+
+        plt.show()
+
     def evaluate(self):
         """
         Evaluates the model on the training data set.
         """
 
         model = self.classifier.fit(self.X_train, self.y_train)
-        rate = model.score(self.X_test, self.y_test)
+        self.y_predicted = model.predict(self.X_test)
+        rate = metrics.accuracy_score(self.y_test, self.y_predicted)
 
         return rate
