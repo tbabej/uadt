@@ -89,6 +89,9 @@ class Scenario(PluginBase, metaclass=PluginMount):
         # Acts like a stack
         self.metadata = []
 
+        # Store for generic metadata, like phone model or its IP
+        self.generic_medatada = {}
+
     @contextlib.contextmanager
     def capture(self, timeout=5):
         """
@@ -151,8 +154,14 @@ class Scenario(PluginBase, metaclass=PluginMount):
         # Capture is over, process the marks now
         filename = os.path.join("data", self.file_identifier + '.marks')
 
+        # Build metadata structure
+        metadata = {
+            'generic': self.generic_metadata,
+            'events': self.marks
+        }
+
         with open(filename, 'w') as mark_file:
-            mark_file.write(json.dumps(self.marks))
+            mark_file.write(json.dumps(metadata))
 
     def add_metadata(self, key, value):
         """
@@ -161,6 +170,14 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
         self.debug("Adding metadata {0}='{1}'".format(key, value))
         self.metadata[-1][key] = value
+
+    def add_generic_metadata(self, key, value):
+        """
+        Adds generic metadata element.
+        """
+
+        self.debug("Adding generic metadata {0}='{1}'".format(key, value))
+        self.generic_metadata[key] = value
 
     @contextlib.contextmanager
     def mark(self, name, timeout=None):
