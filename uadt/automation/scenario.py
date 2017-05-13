@@ -199,11 +199,20 @@ class Scenario(PluginBase, metaclass=PluginMount):
         # Save the generated mark data
         self.marks.append(mark_data)
 
-    def find(self, identifier, method='identifier'):
+    def find(self, identifier, method=None):
         """
         Finds the element.
         """
 
+        # Perform method detection if needed
+        # String starting with / is a XPATH, everything else is an identifier
+        if method is None:
+           if identifier.startswith('/'):
+               method = 'xpath'
+           else:
+               method = 'identifier'
+
+        # Attempt to find the element using given method
         if method == 'identifier':
             return self.driver.find_element_by_id(identifier)
         elif method == 'xpath':
