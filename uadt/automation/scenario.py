@@ -11,8 +11,8 @@ from selenium.common.exceptions import StaleElementReferenceException
 from appium import webdriver
 
 from uadt import config
+from uadt.plugins import PluginBase, PluginMount
 from uadt.automation.generator import DataGenerator
-from uadt.automation.plugins import PluginBase, PluginMount
 
 
 class Scenario(PluginBase, metaclass=PluginMount):
