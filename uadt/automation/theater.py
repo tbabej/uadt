@@ -232,8 +232,18 @@ class Theater(LoggerMixin):
         scenario_finished.wait()
 
         self.info("Terminating all the Appium processes")
+
+        # Send SIGTERM to the appium processes
         for process in appium_processes:
             process.terminate()
+
+        # Allow time for graceful termination
+        time.sleep(3)
+
+        # Time is out, finishing blow with SIGKILL
+        for process in appium_processes:
+            if process.poll() is None:
+                process.kill()
 
     def execute_once(self, scenario_cls):
         appium_ready = multiprocessing.Event()
