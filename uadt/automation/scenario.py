@@ -199,20 +199,38 @@ class Scenario(PluginBase, metaclass=PluginMount):
         # Save the generated mark data
         self.marks.append(mark_data)
 
-    def click(self, identifier, retries=5):
+    def find(self, identifier, method='identifier'):
+        """
+        Finds the element.
+        """
+
+        if method == 'identifier':
+            return self.driver.find_element_by_id(identifier)
+        elif method == 'xpath':
+            return self.driver.find_element_by_xpath(identifier)
+        else:
+            raise Exception("Unsupported method")
+
+    def click(self, identifier_or_object, retries=5):
         """
         Clicks on the selected element. Transparetnly handles associated
         problems, like StaleObjectException.
         """
 
         if retries < 0:
-            raise Exception("Could not click the element {0}".format(identifier))
+            raise Exception("Could not click the element {0}".format(identifier_or_object))
 
-        element = self.driver.find_element_by_id(identifier)
+        if isinstance(identifier_or_object, str):
+            element = self.find(identifier_or_object)
+        elif retries < 5:
+            import bpython
+            bpython.embed(locals_=locals())
+        else:
+            element = identifier_or_object
 
         try:
             element.click()
         except (StaleElementReferenceException, Exception) as e:
             print(str(e))
             print(type(e))
-            self.click(identifier, retries=retries-1)
+            self.click(identifier_or_object, retries=retries-1)
