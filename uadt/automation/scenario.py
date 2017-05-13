@@ -37,6 +37,9 @@ class Scenario(PluginBase, metaclass=PluginMount):
         if self.app_activity is None:
             raise ValueError("Startup activity name must be provided.")
 
+        # Remember the phone information
+        self.phones = phones
+
         generic_capabilities = {
             'appPackage': self.app_package,
             'appActivity': self.app_activity,
@@ -47,7 +50,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
         }
 
         capabilities = generic_capabilities.copy()
-        capabilities.update(phones[0])
+        capabilities.update(self.phones[0])
 
         self.debug("Initializing appium interface")
 
@@ -61,7 +64,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
         if self.dual_phone:
             capabilities = generic_capabilities.copy()
-            capabilities.update(phones[1])
+            capabilities.update(self.phones[1])
 
             self.debug("Initializing second appium interface")
             self.driver2 = webdriver.Remote(
@@ -95,9 +98,20 @@ class Scenario(PluginBase, metaclass=PluginMount):
                    action has been performed
         """
 
+        # Build the capture query
+        # We want to capture all the incoming and outgoing traffic for each
+        # mobile device involved
+        query_parts = []
+        for phone in self.phones:
+            query_parts.append('ip.src == {0} or ip.dst == {0}'
+                               .format(phone['ip']))
+
+        query = ' or '.join(query_parts)
+
+        # Start the capture
         filename = os.path.join("data", self.file_identifier + '.pcap')
-        args = shlex.split("tshark -l -n -T pdml -i {0} -w {1}"
-                           .format(config.CAPTURE_INTERFACE, filename))
+        args = shlex.split("tshark -l -n -T pdml -i {0} -w {1} '{2}'"
+                           .format(config.CAPTURE_INTERFACE, filename, query))
 
         self.info("Capturing script '{0}' to file '{1}'".format(
             self.identifier,
