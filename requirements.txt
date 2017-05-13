@@ -4,3 +4,4 @@ pandas
 numpy
 sklearn
 Appium-Python-Client
+cached-property

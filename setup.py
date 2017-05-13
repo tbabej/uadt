@@ -2,7 +2,8 @@ from setuptools import setup, find_packages
 
 install_requirements = [
     'pebble', 'sklearn', 'docopt', 'pandas',
-    'Appium-Python-Client', 'pyshark'
+    'Appium-Python-Client', 'pyshark',
+    'cached_property'
 ]
 
 version = '0.1.0'
