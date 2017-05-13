@@ -1,5 +1,5 @@
 """
-Usage: theater [-v] [-r <value>] [--phone=<name>...] [--no-adb-reset] <scenario>
+Usage: theater [-v] [-r <value>] [--phone=<name>...] [--adb-reset-freq=<value>] <scenario>
 
 Options:
     -v             Verbose.
@@ -245,14 +245,14 @@ class Theater(LoggerMixin):
             if process.poll() is None:
                 process.kill()
 
-    def execute_once(self, scenario_cls):
+    def execute_once(self, scenario_cls, adb_reset):
         appium_ready = multiprocessing.Event()
         scenario_finished = multiprocessing.Event()
         comm_queue = multiprocessing.Queue()
 
         appium = multiprocessing.Process(
             target=self.initialize_appium,
-            args=(appium_ready, scenario_finished, comm_queue, self.adb_reset)
+            args=(appium_ready, scenario_finished, comm_queue, adb_reset)
         )
         appium.start()
 
@@ -276,6 +276,7 @@ class Theater(LoggerMixin):
         arguments = docopt(__doc__, version='theater')
 
         repeat_count = int(arguments['-r'] or 1)
+        adb_reset_freq = int(arguments['--adb-reset-freq'] or 40)
 
         self.setup_logging(level='debug' if arguments['-v'] else 'info')
         self.import_plugins()
@@ -284,14 +285,14 @@ class Theater(LoggerMixin):
         if scenario_cls is None:
             sys.exit(1)
 
-        self.adb_reset = not arguments.get('--no-adb-reset')
         self.devices = 2 if scenario_cls.dual_phone else 1
         self.phones = self.select_phones(
             arguments['--phone'],
         )
 
-        for __ in range(repeat_count):
-            self.execute_once(scenario_cls)
+        for run_number in range(repeat_count):
+            adb_reset = ((run_number + 1) % adb_reset_freq == 0)
+            self.execute_once(scenario_cls, adb_reset)
 
 
 def main():
