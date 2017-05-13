@@ -1,9 +1,12 @@
+from cached_property import cached_property
+
+
 class ForwardFeatures(object):
     """
     Provides implementation of features for forward packets.
     """
 
-    @property
+    @cached_property
     def forward_packets(self):
         data = self.data[self.data['direction'] == 'forward'].copy()
         return self.compute_time_shifts(data)
@@ -80,7 +83,7 @@ class BackwardFeatures(object):
     Provides implementation of features for backward packets.
     """
 
-    @property
+    @cached_property
     def backward_packets(self):
         data = self.data[self.data['direction'] == 'backward'].copy()
         return self.compute_time_shifts(data)
