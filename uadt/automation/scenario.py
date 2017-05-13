@@ -7,6 +7,7 @@ import shlex
 import time
 import json
 
+from selenium.common.exceptions import StaleElementReferenceException
 from appium import webdriver
 
 from uadt import config
@@ -197,3 +198,21 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
         # Save the generated mark data
         self.marks.append(mark_data)
+
+    def click(self, identifier, retries=5):
+        """
+        Clicks on the selected element. Transparetnly handles associated
+        problems, like StaleObjectException.
+        """
+
+        if retries < 0:
+            raise Exception("Could not click the element {0}".format(identifier))
+
+        element = self.driver.find_element_by_id(identifier)
+
+        try:
+            element.click()
+        except (StaleElementReferenceException, Exception) as e:
+            print(str(e))
+            print(type(e))
+            self.click(identifier, retries=retries-1)
