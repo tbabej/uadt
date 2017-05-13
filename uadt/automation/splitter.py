@@ -64,7 +64,7 @@ class Splitter(PluginBase, metaclass=PluginMount):
             self.metadata = json.loads(marks_file.read())
 
         # Convert timestamps into datetime objects
-        for event in self.metadata:
+        for event in self.metadata['events']:
             event['start'] = datetime.datetime.strptime(
                 event['start'],
                 "%Y-%m-%d %H:%M:%S.%f UTC"
@@ -128,7 +128,7 @@ class Splitter(PluginBase, metaclass=PluginMount):
         def determine_overlap(e):
             return min(e['end'], interval_end) - max(e['start'], interval_start)
 
-        return max(self.metadata, key=determine_overlap)['name']
+        return max(self.metadata['events'], key=determine_overlap)['name']
 
     @abc.abstractmethod
     def split_intervals(self, filename):
@@ -148,7 +148,7 @@ class MarkSplitter(Splitter):
 
     def split_intervals(self, pcap_filename):
         # Process each event separately
-        for event in self.metadata:
+        for event in self.metadata['events']:
             query = 'frame.time >= "{0}" and frame.time <= "{1}"'.format(
                 event['start'].strftime("%Y-%m-%d %H:%M:%S.%f"),
                 event['end'].strftime("%Y-%m-%d %H:%M:%S.%f")
