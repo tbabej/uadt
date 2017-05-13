@@ -273,9 +273,6 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
         if isinstance(identifier_or_object, str):
             element = self.find(identifier_or_object)
-        elif retries < 5:
-            import bpython
-            bpython.embed(locals_=locals())
         else:
             element = identifier_or_object
 
