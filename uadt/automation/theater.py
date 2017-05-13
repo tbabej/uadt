@@ -81,7 +81,11 @@ class Theater(LoggerMixin):
         if not names:
             selected.append(config.PHONES[0])
 
-        print(list(self.available_devices()))
+        # Update selected phones with the information from the adb
+        for available in self.available_devices():
+            for phone in selected:
+                if phone['deviceName'] == available['model']:
+                    phone.update(available)
 
         return selected
 
