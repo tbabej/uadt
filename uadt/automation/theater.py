@@ -13,6 +13,7 @@ import multiprocessing
 import os
 import os.path
 import random
+import re
 import shlex
 import subprocess
 import socket
@@ -64,13 +65,13 @@ class Theater(LoggerMixin):
 
         selected = []
 
-        available_phones = {
+        configured_phones = {
             phone['identifier']: phone
             for phone in config.PHONES
         }
 
         for name in names:
-            phone = available_phones.get(name)
+            phone = configured_phones.get(name)
 
             if phone is None:
                 raise ValueError("Configuration for phone '{0}' not found.")
@@ -80,7 +81,43 @@ class Theater(LoggerMixin):
         if not names:
             selected.append(config.PHONES[0])
 
+        print(list(self.available_devices()))
+
         return selected
+
+    def available_devices(self):
+        """
+        Detect available devices and their parameters using adb devices command.
+        """
+
+        result = subprocess.run(
+            ['adb', 'devices', '-l'],
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+
+        output = result.stdout.decode('utf-8')
+
+        device_regex = re.compile(
+           r'(?P<selector>[^\s]+)\s+'
+           r'device\s+'
+           r'usb:(?P<usb>[^\s]+)\s+'
+           r'product:(?P<product>[^\s]+)\s+'
+           r'model:(?P<model>[^\s]+)\s+'
+           r'device:(?P<device>[^\s]+)'
+        )
+
+        for line in output.splitlines():
+            # Skip the filler lines
+            match = device_regex.search(line)
+            if match:
+                yield {
+                    'selector': match.group('selector'),
+                    'usb': match.group('usb'),
+                    'product': match.group('product'),
+                    'model': match.group('model'),
+                    'device': match.group('device')
+                }
 
     @staticmethod
     def _local_port_free(port):
