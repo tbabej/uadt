@@ -32,24 +32,24 @@ class SignalScenario(Scenario):
         def delivered_suffix(event_identifier):
             return event_identifier + ('_delivered' if delivered else '_undelivered')
 
-        s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/menu_search')
+        s = self.find('org.thoughtcrime.securesms:id/menu_search')
         with self.mark('click_search_event'):
-            s.click()
+            self.click(s)
 
         # User search
-        s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/search_src_text')
+        s = self.find('org.thoughtcrime.securesms:id/search_src_text')
         with self.mark('user_search'):
             s.send_keys(user)
 
         # Open conversation
-        s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/from')
+        s = self.find('org.thoughtcrime.securesms:id/from')
         with self.mark('conversation_open'):
-            s.click()
+            self.click(s)
 
         # Send regular message
-        s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/embedded_text_editor')
+        s = self.find('org.thoughtcrime.securesms:id/embedded_text_editor')
         with self.mark(delivered_suffix('send_regular_message')):
-            s.click()
+            self.click(s)
             text = self.generator.text()
             self.add_metadata('message_length', len(text))
             s.send_keys(text)
@@ -59,13 +59,13 @@ class SignalScenario(Scenario):
                 self.click('org.thoughtcrime.securesms:id/send_button')
 
         # Send picture
-        s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
+        s = self.find('org.thoughtcrime.securesms:id/attach_button')
         with self.mark(delivered_suffix('send_image_no_caption')):
-            s.click()
-            self.driver.find_element_by_xpath(
-                    "//android.widget.FrameLayout[@index='{0}']"
-                    "/android.widget.ImageView".format(random.randint(0, 4))
-                ).click()
+            self.click(s)
+            self.click(
+                "//android.widget.FrameLayout[@index='{0}']"
+                "/android.widget.ImageView".format(random.randint(0, 4))
+            )
 
             with self.mark('receive_image_no_caption'):
                 self.add_metadata('secondary', 'yes')
@@ -73,9 +73,9 @@ class SignalScenario(Scenario):
                 time.sleep(3)  # Extra sleep for transfer
 
         # Send location
-        s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
+        s = self.find('org.thoughtcrime.securesms:id/attach_button')
         with self.mark(delivered_suffix('send_location')):
-            s.click()
+            self.click(s)
             self.click('org.thoughtcrime.securesms:id/location_button')
             self.click('com.google.android.gms:id/select_marker_location')
             self.click('com.google.android.gms:id/confirm_button')
@@ -86,9 +86,9 @@ class SignalScenario(Scenario):
                 time.sleep(3)  # Extra sleep for transfer
 
         # Send GIF
-        s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
+        s = self.find('org.thoughtcrime.securesms:id/attach_button')
         with self.mark(delivered_suffix('send_gif')):
-            s.click()
+            self.click(s)
             self.click('org.thoughtcrime.securesms:id/giphy_button')
             self.click('org.thoughtcrime.securesms:id/thumbnail')
 
