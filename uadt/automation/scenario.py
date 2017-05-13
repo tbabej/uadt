@@ -240,6 +240,5 @@ class Scenario(PluginBase, metaclass=PluginMount):
         try:
             element.click()
         except (StaleElementReferenceException, Exception) as e:
-            print(str(e))
             print(type(e))
             self.click(identifier_or_object, retries=retries-1)
