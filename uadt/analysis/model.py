@@ -37,6 +37,9 @@ class Model(object):
         X = data.drop('class', 1)
         y = data['class']
 
+        # Remember the columns for later usage
+        self.columns = list(X.columns)
+
         # Convert to numpy arrays and scale inputs
         splitted = model_selection.train_test_split(
                 X.as_matrix(),
@@ -74,6 +77,11 @@ class Model(object):
 
         # Obtain confusion matrix data
         cm = metrics.confusion_matrix(self.y_test, self.y_predicted)
+
+        importances = list(sorted(zip(self.classifier.feature_importances_, self.columns)))
+
+        for importance, column_name in importances:
+            print("{0}: {1}".format(column_name, importance))
 
         classes = list(
             [k for v, k in
