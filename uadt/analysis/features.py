@@ -1,16 +1,9 @@
-from cached_property import cached_property
-
 from uadt import config
 
-class ForwardFeatures(object):
+class SizeFeatures(object):
     """
-    Provides implementation of features for forward packets.
+    Provides implementation of size-related features.
     """
-
-    @cached_property
-    def forward_packets(self):
-        data = self.data[self.data['direction'] == 'forward'].copy()
-        return self.compute_time_shifts(data)
 
     @staticmethod
     def parameter_size(packet):
@@ -18,35 +11,6 @@ class ForwardFeatures(object):
         Returns the size of the packet.
         """
         return int(packet.captured_length)
-
-    @staticmethod
-    def parameter_timestamp(packet):
-        """
-        Returns the time when the packet was captured.
-        """
-        return float(packet.sniff_timestamp)
-
-    @staticmethod
-    def parameter_direction(packet):
-        """
-        Returns the direction of the packet.
-        """
-        try:
-            if any([packet.ip.src.startswith(subnet)
-                    for subnet in config.LOCAL_SUBNETS]):
-                return 'forward'
-        except AttributeError:
-            pass
-
-        return 'backward'
-
-    @staticmethod
-    def parameter_ttl(packet):
-        """
-        Returns the time-to-live value of the packet.
-        """
-
-        return int(packet.ip.ttl)
 
     def feature_f_num(self):
         """
@@ -84,48 +48,6 @@ class ForwardFeatures(object):
         """
         return self.forward_packets['size'].std()
 
-    def feature_f_time_min(self):
-        """
-        Returns the smallest inter time difference among forward packets.
-        """
-        return self.forward_packets['timeshift'].min()
-
-    def feature_f_time_max(self):
-        """
-        Returns the biggest inter time difference among forward packets.
-        """
-        return self.forward_packets['timeshift'].max()
-
-    def feature_f_time_mean(self):
-        """
-        Returns the mean inter time difference among forward packets.
-        """
-        return self.forward_packets['timeshift'].mean()
-
-    def feature_f_time_std(self):
-        """
-        Returns the std of inter time difference among forward packets.
-        """
-        return self.forward_packets['timeshift'].std()
-
-    def feature_f_ttl_mean(self):
-        """
-        Returns the mean of TTL values in forward packets.
-        """
-        return self.forward_packets['ttl'].mean()
-
-
-class BackwardFeatures(object):
-    """
-    Provides implementation of features for backward packets.
-    """
-
-    @cached_property
-    def backward_packets(self):
-        data = self.data[self.data['direction'] == 'backward'].copy()
-        return self.compute_time_shifts(data)
-
-
     def feature_b_num(self):
         """
         Returns the number of backward packets.
@@ -162,36 +84,6 @@ class BackwardFeatures(object):
         """
         return self.backward_packets['size'].std()
 
-    def feature_b_time_min(self):
-        """
-        Returns the smallest inter time difference among backward packets.
-        """
-        return self.backward_packets['timeshift'].min()
-
-    def feature_b_time_max(self):
-        """
-        Returns the biggest inter time difference among backward packets.
-        """
-        return self.backward_packets['timeshift'].max()
-
-    def feature_b_time_mean(self):
-        """
-        Returns the mean inter time difference among backward packets.
-        """
-        return self.backward_packets['timeshift'].mean()
-
-    def feature_b_time_std(self):
-        """
-        Returns the std of inter time difference among backward packets.
-        """
-        return self.backward_packets['timeshift'].std()
-
-
-class GlobalFeatures(object):
-    """
-    Provides implementation of features derived from all packets.
-    """
-
     def feature_t_num(self):
         """
         Returns the number of packets.
@@ -222,6 +114,86 @@ class GlobalFeatures(object):
         """
         return self.data['size'].var()
 
+
+class TimeGapFeatures(object):
+    """
+    Provides implementation of features for backward packets.
+    """
+
+    @staticmethod
+    def parameter_timestamp(packet):
+        """
+        Returns the time when the packet was captured.
+        """
+        return float(packet.sniff_timestamp)
+
+    def feature_b_time_min(self):
+        """
+        Returns the smallest inter time difference among backward packets.
+        """
+        return self.backward_packets['timeshift'].min()
+
+    def feature_b_time_max(self):
+        """
+        Returns the biggest inter time difference among backward packets.
+        """
+        return self.backward_packets['timeshift'].max()
+
+    def feature_b_time_mean(self):
+        """
+        Returns the mean inter time difference among backward packets.
+        """
+        return self.backward_packets['timeshift'].mean()
+
+    def feature_b_time_std(self):
+        """
+        Returns the std of inter time difference among backward packets.
+        """
+        return self.backward_packets['timeshift'].std()
+
+    def feature_f_time_min(self):
+        """
+        Returns the smallest inter time difference among forward packets.
+        """
+        return self.forward_packets['timeshift'].min()
+
+    def feature_f_time_max(self):
+        """
+        Returns the biggest inter time difference among forward packets.
+        """
+        return self.forward_packets['timeshift'].max()
+
+    def feature_f_time_mean(self):
+        """
+        Returns the mean inter time difference among forward packets.
+        """
+        return self.forward_packets['timeshift'].mean()
+
+    def feature_f_time_std(self):
+        """
+        Returns the std of inter time difference among forward packets.
+        """
+        return self.forward_packets['timeshift'].std()
+
+
+class IPFeatures(object):
+    """
+    Provides implementation of features derived from various IP header values.
+    """
+
+    @staticmethod
+    def parameter_ttl(packet):
+        """
+        Returns the time-to-live value of the packet.
+        """
+
+        return int(packet.ip.ttl)
+
+    def feature_f_ttl_mean(self):
+        """
+        Returns the mean of TTL values in forward packets.
+        """
+        return self.forward_packets['ttl'].mean()
 
 class TCPFeatures(object):
     """

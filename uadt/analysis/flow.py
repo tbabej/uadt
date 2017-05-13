@@ -3,6 +3,8 @@ import pyshark
 import pandas
 import pprint
 
+from cached_property import cached_property
+
 from uadt.analysis.features import ForwardFeatures, BackwardFeatures, GlobalFeatures
 from uadt import constants
 from uadt import config
@@ -45,6 +47,30 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
             key: method(packet)
             for key, method in self.parameter_methods
         }
+
+    @cached_property
+    def forward_packets(self):
+        data = self.data[self.data['direction'] == 'forward'].copy()
+        return self.compute_time_shifts(data)
+
+    @cached_property
+    def backward_packets(self):
+        data = self.data[self.data['direction'] == 'backward'].copy()
+        return self.compute_time_shifts(data)
+
+    @staticmethod
+    def parameter_direction(packet):
+        """
+        Returns the direction of the packet.
+        """
+        try:
+            if any([packet.ip.src.startswith(subnet)
+                    for subnet in config.LOCAL_SUBNETS]):
+                return 'forward'
+        except AttributeError:
+            pass
+
+        return 'backward'
 
     @staticmethod
     def compute_time_shifts(data):
