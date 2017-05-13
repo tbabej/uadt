@@ -46,10 +46,29 @@ class Scenario(PluginBase, metaclass=PluginMount):
         self.metadata = []
 
         # Store for generic metadata, like phone model or its IP
-        self.generic_medatada = {}
+        self.generic_metadata = {}
 
         # Remember the phone information
         self.phones = phones
+
+        # Store phone related metadata for eternity
+        for index, phone in enumerate(self.phones):
+            self.add_generic_metadata(
+                'phone_{0}_name'.format(index),
+                phone['identifier']
+            )
+            self.add_generic_metadata(
+                'phone_{0}_android_ver'.format(index),
+                phone['platformVersion']
+            )
+            self.add_generic_metadata(
+                'phone_{0}_model'.format(index),
+                phone['model']
+            )
+            self.add_generic_metadata(
+                'phone_{0}_ip'.format(index),
+                phone['ip']
+            )
 
         # Determine the file name template
         self.file_identifier = '{plugin}_{timestamp}_{phone}'.format(**{
