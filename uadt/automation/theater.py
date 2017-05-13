@@ -82,10 +82,15 @@ class Theater(LoggerMixin):
             selected.append(config.PHONES[0])
 
         # Update selected phones with the information from the adb
-        for available in self.available_devices():
-            for phone in selected:
+        for phone in selected:
+            for available in self.available_devices():
                 if phone['deviceName'] == available['model']:
                     phone.update(available)
+                    break
+            else:
+                raise ValueError("Phone '{0}' is not available via ADB."
+                                 .format(phone['identifier']))
+
 
         for phone in selected:
             phone['ip'] = self._obtain_ip(phone)
