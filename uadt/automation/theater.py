@@ -87,6 +87,9 @@ class Theater(LoggerMixin):
                 if phone['deviceName'] == available['model']:
                     phone.update(available)
 
+        for phone in selected:
+            phone['ip'] = self._obtain_ip(phone)
+
         return selected
 
     def available_devices(self):
@@ -122,6 +125,33 @@ class Theater(LoggerMixin):
                     'model': match.group('model'),
                     'device': match.group('device')
                 }
+
+    def _obtain_ip(self, phone):
+        """
+        Gets the IP address of the WLAN interface of the given phone.
+        """
+
+        args = [
+            'adb',
+            '-s', phone['selector'],
+            'shell',
+            'ip', 'route'
+        ]
+
+        result = subprocess.run(
+            args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        )
+
+        ip_regex = re.compile(
+            r'src (?P<ip>\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})'
+        )
+
+        for line in result.stdout.decode('utf-8').splitlines():
+            match = ip_regex.search(line)
+            if match:
+                return match.group('ip')
 
     @staticmethod
     def _local_port_free(port):
