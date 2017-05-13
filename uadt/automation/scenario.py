@@ -103,8 +103,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
         # mobile device involved
         query_parts = []
         for phone in self.phones:
-            query_parts.append('ip.src == {0} or ip.dst == {0}'
-                               .format(phone['ip']))
+            query_parts.append('host {0}'.format(phone['ip']))
 
         query = ' or '.join(query_parts)
 
