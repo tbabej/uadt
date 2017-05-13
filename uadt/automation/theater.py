@@ -190,9 +190,9 @@ class Theater(LoggerMixin):
 
     def initialize_appium(self, appium_ready, scenario_finished, comm_queue, adb_reset=True):
         env = os.environ.copy()
-        env['JAVA_HOME'] = "/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-1.b12.fc25.x86_64/"
-        env['PATH'] = env['PATH'] + ":/usr/lib/jvm/java-1.8.0-openjdk-1.8.0.131-1.b12.fc25.x86_64/bin/"
-        env['ANDROID_HOME'] = "/home/tbabej/Installed/Android/"
+        env['ANDROID_HOME'] = config.ANDROID_HOME
+        env['JAVA_HOME'] = config.JAVA_HOME
+        env['PATH'] = env['PATH'] + ":" + os.path.join(config.JAVA_HOME, "bin/")
 
         # Restart ADB server
         if adb_reset:
