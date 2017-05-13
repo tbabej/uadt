@@ -32,15 +32,36 @@ class Scenario(PluginBase, metaclass=PluginMount):
         capabilities.
         """
 
+        # Verify class attribute requirements
         if self.app_package is None:
             raise ValueError("Package name must be provided.")
 
         if self.app_activity is None:
             raise ValueError("Startup activity name must be provided.")
 
+        # Storage for events
+        self.marks = []
+
+        # Acts like a stack
+        self.metadata = []
+
+        # Store for generic metadata, like phone model or its IP
+        self.generic_medatada = {}
+
         # Remember the phone information
         self.phones = phones
 
+        # Determine the file name template
+        self.file_identifier = '{plugin}_{timestamp}_{phone}'.format(**{
+            'plugin': self.identifier,
+            'phone': self.phones[0]['identifier'],
+            'timestamp': datetime.datetime.utcnow().strftime("%Y%m%d_%H%M%S")
+        })
+
+        # Fake data generator
+        self.generator = DataGenerator()
+
+        # Create appium instance(s)
         generic_capabilities = {
             'appPackage': self.app_package,
             'appActivity': self.app_activity,
@@ -75,22 +96,6 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
             # Configure generous implicit wait time (if manual action is needed)
             self.driver2.implicitly_wait(60)
-
-        self.generator = DataGenerator()
-
-        self.file_identifier = '{plugin}_{timestamp}_{phone}'.format(**{
-            'plugin': self.identifier,
-            'phone': self.phones[0]['identifier'],
-            'timestamp': datetime.datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-        })
-
-        self.marks = []
-
-        # Acts like a stack
-        self.metadata = []
-
-        # Store for generic metadata, like phone model or its IP
-        self.generic_medatada = {}
 
     @contextlib.contextmanager
     def capture(self, timeout=5):
