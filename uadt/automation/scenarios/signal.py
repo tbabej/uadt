@@ -56,7 +56,7 @@ class SignalScenario(Scenario):
 
             with self.mark('receive_regular_message'):
                 self.add_metadata('secondary', 'yes')  # Mark the important data stream
-                self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
+                self.click('org.thoughtcrime.securesms:id/send_button')
 
         # Send picture
         s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
@@ -69,32 +69,32 @@ class SignalScenario(Scenario):
 
             with self.mark('receive_image_no_caption'):
                 self.add_metadata('secondary', 'yes')
-                self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
+                self.click('org.thoughtcrime.securesms:id/send_button')
                 time.sleep(3)  # Extra sleep for transfer
 
         # Send location
         s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
         with self.mark(delivered_suffix('send_location')):
             s.click()
-            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/location_button').click()
-            self.driver.find_element_by_id('com.google.android.gms:id/select_marker_location').click()
-            self.driver.find_element_by_id('com.google.android.gms:id/confirm_button').click()
+            self.click('org.thoughtcrime.securesms:id/location_button')
+            self.click('com.google.android.gms:id/select_marker_location')
+            self.click('com.google.android.gms:id/confirm_button')
 
             with self.mark('receive_location'):
                 self.add_metadata('secondary', 'yes')
-                self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
+                self.click('org.thoughtcrime.securesms:id/send_button')
                 time.sleep(3)  # Extra sleep for transfer
 
         # Send GIF
         s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/attach_button')
         with self.mark(delivered_suffix('send_gif')):
             s.click()
-            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/giphy_button').click()
-            self.driver.find_element_by_id('org.thoughtcrime.securesms:id/thumbnail').click()
+            self.click('org.thoughtcrime.securesms:id/giphy_button')
+            self.click('org.thoughtcrime.securesms:id/thumbnail')
 
             with self.mark('receive_gif'):
                 self.add_metadata('secondary', 'yes')
-                self.driver.find_element_by_id('org.thoughtcrime.securesms:id/send_button').click()
+                self.click('org.thoughtcrime.securesms:id/send_button')
                 time.sleep(2)  # Extra sleep for transfer
 
         # Press the back button (once to retract keyboard, once to go back)
@@ -102,5 +102,4 @@ class SignalScenario(Scenario):
         time.sleep(2)
         self.driver.press_keycode(4)
 
-        s = self.driver.find_element_by_id('org.thoughtcrime.securesms:id/search_close_btn')
-        s.click()
+        self.click('org.thoughtcrime.securesms:id/search_close_btn')
