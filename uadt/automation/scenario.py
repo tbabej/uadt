@@ -78,8 +78,9 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
         self.generator = DataGenerator()
 
-        self.file_identifier = '{plugin_identifier}_{timestamp}'.format(**{
-            'plugin_identifier': self.identifier,
+        self.file_identifier = '{plugin}_{timestamp}_{phone}'.format(**{
+            'plugin': self.identifier,
+            'phone': self.phones[0]['identifier'],
             'timestamp': datetime.datetime.utcnow().strftime("%Y%m%d_%H%M%S")
         })
 
