@@ -1,5 +1,6 @@
 from cached_property import cached_property
 
+from uadt import config
 
 class ForwardFeatures(object):
     """
@@ -10,6 +11,42 @@ class ForwardFeatures(object):
     def forward_packets(self):
         data = self.data[self.data['direction'] == 'forward'].copy()
         return self.compute_time_shifts(data)
+
+    @staticmethod
+    def parameter_size(packet):
+        """
+        Returns the size of the packet.
+        """
+        return int(packet.captured_length)
+
+    @staticmethod
+    def parameter_timestamp(packet):
+        """
+        Returns the time when the packet was captured.
+        """
+        return float(packet.sniff_timestamp)
+
+    @staticmethod
+    def parameter_direction(packet):
+        """
+        Returns the direction of the packet.
+        """
+        try:
+            if any([packet.ip.src.startswith(subnet)
+                    for subnet in config.LOCAL_SUBNETS]):
+                return 'forward'
+        except AttributeError:
+            pass
+
+        return 'backward'
+
+    @staticmethod
+    def parameter_ttl(packet):
+        """
+        Returns the time-to-live value of the packet.
+        """
+
+        return int(packet.ip.ttl)
 
     def feature_f_num(self):
         """

@@ -17,6 +17,13 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
     def __init__(self, packets, path=None):
         self.path = path
 
+        # Dynamically find all parameters
+        self.parameter_methods = [
+            ('_'.join(k.split('_')[1:]), getattr(self, k))
+            for k in dir(self)
+            if k.startswith('parameter_')
+        ]
+
         # Extract basic data from the flow
         packet_data = [self.parse_packet(p) for p in packets]
         self.data = pandas.DataFrame(packet_data)
@@ -27,19 +34,17 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
         packets = list(pyshark.FileCapture(path))
         return cls(packets, path=path)
 
-    @staticmethod
-    def parse_packet(packet):
-        packet_data = {
-            'size': int(packet.captured_length),
-            'timestamp': float(packet.sniff_timestamp),
-            'ttl': int(packet.ip.ttl if 'ip' in dir(packet) else 0),
-            'direction': (
-                'forward' if any([packet.ip.src.startswith(subnet)
-                                  for subnet in config.LOCAL_SUBNETS])
-                else 'backward')
-                if 'ip' in dir(packet) else 'forward'
+    def parse_packet(self, packet):
+        """
+        Compute the parameters vector by applying each parameter method
+        on the given packet. This parameter vector is then expanded to
+        a feature vector by computing various statistics of parameters.
+        """
+
+        return {
+            key: method(packet)
+            for key, method in self.parameter_methods
         }
-        return packet_data
 
     @staticmethod
     def compute_time_shifts(data):
