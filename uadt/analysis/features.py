@@ -238,3 +238,61 @@ class TCPFeatures(object):
 
     def feature_tcp_window_scalefactor_std(self):
         return self.data['tcp_window_scalefactor'].std()
+
+
+class SSLFeatures(object):
+    """
+    Provides implementation of features related to TCP metadata.
+    """
+
+    @staticmethod
+    def parameter_ssl_session_id_length(packet):
+        return int(packet.ssl.handshake_session_id_length)
+
+    @staticmethod
+    def parameter_ssl_compression_methods_length(packet):
+        return int(packet.ssl.handshake_comp_methods_length)
+
+    @staticmethod
+    def parameter_ssl_extensions_length(packet):
+        return int(packet.ssl.handshake_extensions_length)
+
+    def feature_ssl_session_id_length_min(self):
+        return self.data['ssl_session_id_length'].min()
+
+    def feature_ssl_session_id_length_max(self):
+        return self.data['ssl_session_id_length'].max()
+
+    def feature_ssl_session_id_length_mean(self):
+        return self.data['ssl_session_id_length'].mean()
+
+    def feature_ssl_session_id_length_std(self):
+        return self.data['ssl_session_id_length'].std()
+
+    def feature_ssl_compression_methods_length_min(self):
+        return self.data['ssl_compression_methods_length'].min()
+
+    def feature_ssl_compression_methods_length_max(self):
+        return self.data['ssl_compression_methods_length'].max()
+
+    def feature_ssl_compression_methods_length_mean(self):
+        return self.data['ssl_compression_methods_length'].mean()
+
+    def feature_ssl_compression_methods_length_std(self):
+        return self.data['ssl_compression_methods_length'].std()
+
+    def feature_ssl_extensions_length_min(self):
+        return self.data['ssl_extensions_length'].min()
+
+    def feature_ssl_extensions_length_max(self):
+        return self.data['ssl_extensions_length'].max()
+
+    def feature_ssl_extensions_length_mean(self):
+        return self.data['ssl_extensions_length'].mean()
+
+    def feature_ssl_extensions_length_std(self):
+        return self.data['ssl_extensions_length'].std()
+
+    def feature_ssl_num_handshakes(self):
+        counts = (self.data['ssl_session_id_length'] != None).value_counts()
+        return counts[True]

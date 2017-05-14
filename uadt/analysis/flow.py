@@ -5,12 +5,12 @@ import pprint
 
 from cached_property import cached_property
 
-from uadt.analysis.features import SizeFeatures, TimeGapFeatures, TCPFeatures, IPFeatures
+from uadt.analysis.features import SizeFeatures, TimeGapFeatures, TCPFeatures, IPFeatures, SSLFeatures
 from uadt import constants
 from uadt import config
 
 
-class Flow(SizeFeatures, TimeGapFeatures, TCPFeatures, IPFeatures):
+class Flow(SizeFeatures, TimeGapFeatures, TCPFeatures, IPFeatures, SSLFeatures):
     """
     Represents one captured session flow, which should be classified.
     Generates necessary features that will be used as inputs during classification.
