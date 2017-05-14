@@ -296,3 +296,22 @@ class SSLFeatures(object):
     def feature_ssl_num_handshakes(self):
         counts = self.data['ssl_session_id_length'].notnull().value_counts()
         return counts[True]
+
+
+class DNSFeatures(object):
+    """
+    Provides implementation of features related to DNS metadata.
+    """
+
+    @staticmethod
+    def parameter_dns_request_type(packet):
+        """
+        Returns the type of the TCP packet.
+        """
+        return int(packet.dns.qry_type)
+
+    def feature_num_dns_A_requests(self):
+        return (self.data['dns_request_type'] == 1).value_counts()[True]
+
+    def feature_num_dns_requests(self):
+        return self.data['dns_request_type'].notnull().value_counts()[True]
