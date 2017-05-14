@@ -13,7 +13,7 @@ class ImageRecognitionDriver(webdriver.Remote):
     Extends the Driver with image recognition methods.
     """
 
-    def click_by_image(self, path):
+    def click_by_image(self, path, required_confidence=0.7):
         """
         Clicks on the coordinates that correspond to the given subimage in the
         current display screen.
@@ -45,13 +45,18 @@ class ImageRecognitionDriver(webdriver.Remote):
 
         # Find the match
         result = cv2.matchTemplate(screen, selection, cv2.TM_CCOEFF_NORMED)
-        best_coordinates = numpy.unravel_index(result.argmax(), result.shape)
+        __, max_confidence, __, max_location = cv2.minMaxLoc(result)
 
-        # Compute the midpoint of the selection
-        coordinates = (
-            int(best_coordinates[1] + selection.shape[1] / 2.0),
-            int(best_coordinates[0] + selection.shape[0] / 2.0),
-        )
+        if max_confidence >= required_confidence:
+            # Compute the midpoint of the selection
+            coordinates = (
+                int(max_location[1] + selection.shape[1] / 2.0),
+                int(max_location[0] + selection.shape[0] / 2.0),
+            )
 
-        # Tap the coordinates
-        self.tap([coordinates])
+            # Tap the coordinates
+            self.tap([coordinates])
+        else:
+            raise Exception("Could not find the required subimage with "
+                            "sufficient confidence. Obtained confidence: {0}"
+                            .format(max_confidence))
