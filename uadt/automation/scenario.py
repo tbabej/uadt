@@ -8,11 +8,11 @@ import time
 import json
 
 from selenium.common.exceptions import StaleElementReferenceException
-from appium import webdriver
 
 from uadt import config
 from uadt.plugins import PluginBase, PluginMount
 from uadt.automation.generator import DataGenerator
+from uadt.automation.driver import ImageRecognitionDriver
 
 
 class Scenario(PluginBase, metaclass=PluginMount):
@@ -95,7 +95,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
         self.debug("Initializing appium interface")
 
-        self.driver = webdriver.Remote(
+        self.driver = ImageRecognitionDriver(
             'http://localhost:{0}/wd/hub'.format(appium_ports[0]),
             capabilities
         )
@@ -108,7 +108,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
             capabilities.update(self.phones[1])
 
             self.debug("Initializing second appium interface")
-            self.driver2 = webdriver.Remote(
+            self.driver2 = ImageRecognitionDriver(
                 'http://localhost:{0}/wd/hub'.format(appium_ports[1]),
                 capabilities
             )
