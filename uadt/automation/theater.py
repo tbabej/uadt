@@ -261,9 +261,9 @@ class Theater(LoggerMixin):
 
         appium_ports = comm_queue.get()
 
-        scenario = scenario_cls(appium_ports, self.phones)
-        self.info("Executing scenario: {0}".format(scenario.identifier))
         try:
+            scenario = scenario_cls(appium_ports, self.phones)
+            self.info("Executing scenario: {0}".format(scenario.identifier))
             scenario.execute()
         except Exception as e:
             self.debug(str(e))
