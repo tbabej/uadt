@@ -85,8 +85,8 @@ class DatasetProcessor(object):
                 return f.features
             else:
                 print("Warning: Flow '{0}' is empty".format(path))
-        except (Exception, AttributeError):
-            print("Data extraction from '{0}' failed".format(path))
+        except (Exception, AttributeError) as e:
+            print("Data extraction from '{0}' failed: {1}".format(path, str(e)))
 
     def process(self):
         """
