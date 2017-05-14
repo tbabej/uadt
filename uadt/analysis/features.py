@@ -195,15 +195,46 @@ class IPFeatures(object):
         """
         return self.forward_packets['ttl'].mean()
 
+
 class TCPFeatures(object):
     """
     Provides implementation of features related to TCP metadata.
     """
 
-    def feature_tcp_window_size(self):
-        first_packet = self.packets[0]
-        return int(first_packet.tcp.window_size)
+    @staticmethod
+    def parameter_tcp_window_size(packet):
+        """
+        Returns the window size of the TCP packet.
+        """
+        return int(packet.tcp.window_size)
 
-    def feature_tcp_window_scale(self):
-        first_packet = self.packets[0]
-        return int(first_packet.tcp.window_size)
+    @staticmethod
+    def parameter_tcp_window_scalefactor(packet):
+        """
+        Returns the window size scalefactor of the TCP packet.
+        """
+        return int(packet.tcp.window_size_scalefactor)
+
+    def feature_tcp_window_size_min(self):
+        return self.data['tcp_window_size'].min()
+
+    def feature_tcp_window_size_max(self):
+        return self.data['tcp_window_size'].max()
+
+    def feature_tcp_window_size_mean(self):
+        return self.data['tcp_window_size'].mean()
+
+    def feature_tcp_window_size_std(self):
+        return self.data['tcp_window_size'].std()
+
+    def feature_tcp_window_scalefactor_min(self):
+        return self.data['tcp_window_scalefactor'].min()
+
+    def feature_tcp_window_scalefactor_max(self):
+        return self.data['tcp_window_scalefactor'].max()
+
+    def feature_tcp_window_scalefactor_mean(self):
+        return self.data['tcp_window_scalefactor'].mean()
+
+    def feature_tcp_window_scalefactor_std(self):
+        return self.data['tcp_window_scalefactor'].std()
