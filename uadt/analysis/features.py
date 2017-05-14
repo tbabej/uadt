@@ -294,5 +294,5 @@ class SSLFeatures(object):
         return self.data['ssl_extensions_length'].std()
 
     def feature_ssl_num_handshakes(self):
-        counts = (self.data['ssl_session_id_length'] != None).value_counts()
+        counts = self.data['ssl_session_id_length'].notnull().value_counts()
         return counts[True]
