@@ -2,6 +2,7 @@ import cv2
 import numpy
 import datetime
 import random
+import time
 import os
 
 from appium import webdriver
@@ -27,6 +28,7 @@ class ImageRecognitionDriver(webdriver.Remote):
         )
 
         # Obtain screenshot
+        time.sleep(2)
         success = self.get_screenshot_as_file(screenshot_path)
         if not success:
             raise Exception("Could not obtain screenshot")
