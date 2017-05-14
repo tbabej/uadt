@@ -20,6 +20,7 @@ import socket
 import sys
 import time
 
+import pyudev
 from docopt import docopt
 
 from uadt.automation.scenario import Scenario
@@ -102,13 +103,20 @@ class Theater(LoggerMixin):
         Detect available devices and their parameters using adb devices command.
         """
 
-        result = subprocess.run(
-            ['adb', 'devices', '-l'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE
-        )
+        def get_adb_devices_output():
+            result = subprocess.run(
+                ['adb', 'devices', '-l'],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE
+            )
 
-        output = result.stdout.decode('utf-8')
+            return result.stdout.decode('utf-8')
+
+        offline_regex = re.compile(
+           r'(?P<selector>[^\s]+)\s+'
+           r'offline\s+'
+           r'usb:(?P<usb>[^\s]+)\s+'
+        )
 
         device_regex = re.compile(
            r'(?P<selector>[^\s]+)\s+'
@@ -118,6 +126,33 @@ class Theater(LoggerMixin):
            r'model:(?P<model>[^\s]+)\s+'
            r'device:(?P<device>[^\s]+)'
         )
+
+        output = get_adb_devices_output()
+
+        offline_devices = [
+            offline_regex.search(line)
+            for line in output.splitlines()
+        ]
+
+        # Attempt to rescue any offline device by resetting its USB port
+        # (simulates plugging in and out)
+        if any(offline_devices):
+            context = pyudev.Context()
+            usb_devices = context.list_devices().match_subsystem('usb')
+
+            for match in offline_devices:
+                if match is not None:
+                    matching_devices = list(usb_devices.match_property(
+                        'ID_SERIAL_SHORT',
+                         match.group('selector')
+                    ))
+
+                    if not matching_devices:
+                        # We could not rescue this device, move on
+                        continue
+
+                    devname = matching_devices[0].get('ID_SERIAL_SHORT')
+                    self._reset_device(devname)
 
         for line in output.splitlines():
             # Skip the filler lines
@@ -130,6 +165,14 @@ class Theater(LoggerMixin):
                     'model': match.group('model'),
                     'device': match.group('device')
                 }
+
+    def _reset_device(self, devname):
+        """
+        Resets the USB device using fnctl.
+        """
+
+        # This requires sudo privileges, so let's run it in a separate script
+        subprocess.run(['sudo', 'uadt-reset-usb', devname])
 
     def _obtain_ip(self, phone):
         """
