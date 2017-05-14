@@ -25,6 +25,7 @@ setup(
     entry_points={
         'console_scripts': [
             'uadt-theater = uadt.automation.theater:main',
+            'uadt-usb-reset = uadt.automation.usbreset:main',
             'uadt-splitter = uadt.automation.splitter:main',
             'uadt-dataset = uadt.analysis.dataset:main',
             'uadt-live = uadt.analysis.live:main',
