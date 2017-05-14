@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 install_requirements = [
     'pebble', 'sklearn', 'docopt', 'pandas',
     'Appium-Python-Client', 'pyshark',
-    'cached_property'
+    'cached_property', 'pyudev'
 ]
 
 version = '0.1.0'
