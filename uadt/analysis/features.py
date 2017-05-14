@@ -295,7 +295,7 @@ class SSLFeatures(object):
 
     def feature_ssl_num_handshakes(self):
         counts = self.data['ssl_session_id_length'].notnull().value_counts()
-        return counts[True]
+        return counts.get(True)
 
 
 class DNSFeatures(object):
