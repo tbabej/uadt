@@ -153,7 +153,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
             except Exception:
                 # In case any problem occurred during the execution of the
                 # scenario, remove associated pcap file
-                self.error('An exception occurred during the execution of'
+                self.error('An exception occurred during the execution of '
                            'the scenario, removing session PCAP file: {}'
                            .format(filename))
                 p.terminate()
