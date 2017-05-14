@@ -43,10 +43,16 @@ class Flow(ForwardFeatures, BackwardFeatures, GlobalFeatures):
         a feature vector by computing various statistics of parameters.
         """
 
-        return {
-            key: method(packet)
-            for key, method in self.parameter_methods
-        }
+        parameter_vector = {}
+        for key, method in self.parameter_methods:
+            try:
+                parameter_vector[key] = method(packet)
+            except AttributeError:
+                # Raised in case of trying to access fileds the packet does
+                # not have, i.e. TCP fields in UDP packet
+                parameter_vector[key] = None
+
+        return parameter_vector
 
     @cached_property
     def forward_packets(self):
