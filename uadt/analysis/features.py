@@ -311,7 +311,7 @@ class DNSFeatures(object):
         return int(packet.dns.qry_type)
 
     def feature_num_dns_A_requests(self):
-        return (self.data['dns_request_type'] == 1).value_counts()[True]
+        return (self.data['dns_request_type'] == 1).value_counts().get(True)
 
     def feature_num_dns_requests(self):
-        return self.data['dns_request_type'].notnull().value_counts()[True]
+        return self.data['dns_request_type'].notnull().value_counts().get(True)
