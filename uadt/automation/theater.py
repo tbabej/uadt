@@ -177,7 +177,7 @@ class Theater(LoggerMixin):
         """
 
         # This requires sudo privileges, so let's run it in a separate script
-        subprocess.run(['sudo', 'uadt-reset-usb', devname])
+        subprocess.run(['sudo', 'uadt-usb-reset', devname])
 
     def _obtain_ip(self, phone):
         """
