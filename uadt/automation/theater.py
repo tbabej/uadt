@@ -159,6 +159,11 @@ class Theater(LoggerMixin):
 
                     self._reset_device(devname)
 
+            # Wait for sufficient amount of time for the devices to regenerate
+            # then obtain new device list
+            time.sleep(3)
+            output = get_adb_devices_output()
+
         for line in output.splitlines():
             # Skip the filler lines
             match = device_regex.search(line)
