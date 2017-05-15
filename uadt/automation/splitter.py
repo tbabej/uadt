@@ -60,8 +60,14 @@ class Splitter(PluginBase, metaclass=PluginMount):
         marks_path = '.'.join(pcap_filename.split('.')[:-1]) + '.marks'
 
         # Load the marks file
-        with open(marks_path, 'r') as marks_file:
-            self.metadata = json.loads(marks_file.read())
+        try:
+            with open(marks_path, 'r') as marks_file:
+                self.metadata = json.loads(marks_file.read())
+        except FileNotFoundError:
+            self.warning("Marks file '{0}' not found. Skipping."
+                         .format(marks_path))
+            return
+
 
         # Convert timestamps into datetime objects
         for event in self.metadata['events']:
