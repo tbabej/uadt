@@ -142,6 +142,8 @@ class Theater(LoggerMixin):
 
             for match in offline_devices:
                 if match is not None:
+                    self.warning('Offline device detected: {0}'
+                                 .format(match.group('selector')))
                     matching_devices = list(usb_devices.match_property(
                         'ID_SERIAL_SHORT',
                          match.group('selector')
@@ -149,9 +151,12 @@ class Theater(LoggerMixin):
 
                     if not matching_devices:
                         # We could not rescue this device, move on
+                        self.info('No matching USB device found')
                         continue
 
-                    devname = matching_devices[0].get('ID_SERIAL_SHORT')
+                    devname = matching_devices[0].get('DEVNAME')
+                    self.info('Resetting USB device: {0}'.format(devname))
+
                     self._reset_device(devname)
 
         for line in output.splitlines():
