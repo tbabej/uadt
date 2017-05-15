@@ -115,7 +115,7 @@ class Theater(LoggerMixin):
         offline_regex = re.compile(
            r'(?P<selector>[^\s]+)\s+'
            r'offline\s+'
-           r'usb:(?P<usb>[^\s]+)\s+'
+           r'usb:(?P<usb>[^\s]+)'
         )
 
         device_regex = re.compile(
