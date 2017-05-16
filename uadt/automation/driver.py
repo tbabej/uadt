@@ -33,15 +33,16 @@ class ImageRecognitionDriver(webdriver.Remote):
         if not success:
             raise Exception("Could not obtain screenshot")
 
+        # Load both images
+        screen = cv2.imread(screenshot_path)
+        selection = cv2.imread(path)
+
         # Attempt to remove the screenshot file
         try:
             os.remove(screenshot_path)
         except OSError:
             pass
 
-        # Load both images
-        screen = cv2.imread(screenshot_path)
-        selection = cv2.imread(path)
 
         # Find the match
         result = cv2.matchTemplate(screen, selection, cv2.TM_CCOEFF_NORMED)
