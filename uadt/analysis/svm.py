@@ -48,7 +48,7 @@ class Machine(Model):
             for gamma in gamma_candidates
         )
 
-        _, self.hyperparameters = max(rates)
+        _, self.hyperparameters = max(rates, key=lambda x: x[0])
 
 
 def main():
