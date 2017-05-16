@@ -27,13 +27,7 @@ class Tree(Model):
     Provides the decision tree classifier.
     """
 
-    def initialize_classifier(self):
-        """
-        Initializes the classifier. Decision trees do not require any
-        hyperparamters.
-        """
-
-        self.classifier = tree.DecisionTreeClassifier()
+    classifier_cls = tree.DecisionTreeClassifier
 
 
 def main():

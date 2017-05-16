@@ -32,6 +32,7 @@ from uadt.analysis.model import Model
 class Machine(Model):
 
     scale_data = True
+    classifier_cls = svm.SVC
 
     def optimize_paramters(self):
         """
@@ -42,23 +43,12 @@ class Machine(Model):
         gamma_candidates = [2.0**(2*p-1) for p in range(-8, 3)]
 
         rates = Parallel(n_jobs=config.NUM_JOBS)(
-            delayed(self.test_parameters)(C, gamma, decision_function_shape='ovr')
+            delayed(self.test_parameters)(C=C, gamma=gamma, decision_function_shape='ovr')
             for C in C_candidates
             for gamma in gamma_candidates
         )
 
-        _, self.C, self.gamma = max(rates)
-
-    def initialize_classifier(self):
-        """
-        Intializes the SVM with the determined hyperparameters.
-        """
-
-        self.classifier = svm.SVC(
-            C=self.C,
-            gamma=self.gamma,
-            decision_function_shape='ovr'
-        )
+        _, self.hyperparameters = max(rates)
 
 
 def main():

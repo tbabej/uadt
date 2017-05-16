@@ -15,6 +15,7 @@ from uadt import constants
 class Model(object):
 
     scale_data = False
+    classifier_cls = None
 
     def __init__(self, path, train_size):
         """
@@ -23,6 +24,9 @@ class Model(object):
 
         self.path = path
         self.train_size = train_size
+
+        # Set empty hyperparameters initially (some models do not have any)
+        self.hyperparameters = {}
 
     def prepare_data(self):
         """
@@ -62,7 +66,14 @@ class Model(object):
         self.y_train = splitted[2]
         self.y_test  = splitted[3]
 
-    def test_parameters(self, *args):
+    def initialize_classifier(self):
+        """
+        Intializes the classifier with the determined hyperparameters.
+        """
+
+        self.classifier = self.classifier_cls(**self.hyperparameters)
+
+    def test_parameters(self, **hyperparameters):
         """
         Performs a 5-Fold cross validation of the given hyperparameters on the
         training set.
@@ -77,21 +88,14 @@ class Model(object):
             y_train = self.y_train[fold_train]
             y_test  = self.y_train[fold_test]
 
-            classifier = self.classifier.__class__(*args)
-            model = classifier.fit(X_train, y_train)
+            fold_classifier = self.classifier_cls(**hyperparameters)
+            model = fold_classifier.fit(X_train, y_train)
             rate = model.score(X_test, y_test)
 
             fold_success_rates.append(rate)
 
         success_rate = numpy.average(fold_success_rates)
-        return (success_rate, *args)
-
-    @abc.abstractmethod
-    def initialize_classifier(self):
-        """
-        Initializes the classifier instance.
-        """
-        pass
+        return (success_rate, hyperparameters)
 
     def plot_confusion_matrix(self, normalize=False):
         """
