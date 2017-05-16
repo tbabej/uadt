@@ -31,7 +31,7 @@ setup(
             'uadt-live = uadt.analysis.live:main',
             'uadt-model-svm = uadt.analysis.svm:main',
             'uadt-model-tree = uadt.analysis.tree:main',
-            'uadt-model-forest = uadt.analysis.forest:main',
+            'uadt-model-forest = uadt.analysis.randomforest:main',
         ]
     },
 )
