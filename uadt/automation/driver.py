@@ -48,11 +48,13 @@ class ImageRecognitionDriver(webdriver.Remote):
         result = cv2.matchTemplate(screen, selection, cv2.TM_CCOEFF_NORMED)
         __, max_confidence, __, max_location = cv2.minMaxLoc(result)
 
+        # If we are confident enough, tap the midpoint of the selection
         if max_confidence >= required_confidence:
-            # Compute the midpoint of the selection
+            # It is weird, but max_location and selection.shape have x and y
+            # axis order reversed
             coordinates = (
-                int(max_location[1] + selection.shape[1] / 2.0),
-                int(max_location[0] + selection.shape[0] / 2.0),
+                int(max_location[0] + selection.shape[1] / 2.0),
+                int(max_location[1] + selection.shape[0] / 2.0),
             )
 
             # Tap the coordinates
