@@ -71,6 +71,8 @@ class Model(object):
         Intializes the classifier with the determined hyperparameters.
         """
 
+        print("Initializing classifier with hyperparameters: {0}"
+              .format(self.hyperparameters))
         self.classifier = self.classifier_cls(**self.hyperparameters)
 
     def test_parameters(self, **hyperparameters):

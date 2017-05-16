@@ -65,8 +65,6 @@ def main():
         machine.C = float(arguments.get('-C'))
         machine.gamma = float(arguments.get('--gamma'))
 
-    print("Used parameters: C={0}, gamma={1}".format(machine.C, machine.gamma))
-
     machine.initialize_classifier()
 
     print("Success rate: {0}".format(machine.evaluate()))
