@@ -62,6 +62,30 @@ class Model(object):
         self.y_train = splitted[2]
         self.y_test  = splitted[3]
 
+    def test_parameters(self, *args):
+        """
+        Performs a 5-Fold cross validation of the given hyperparameters on the
+        training set.
+        """
+
+        fold_success_rates = []
+        five_fold = model_selection.KFold(n_splits=5)
+
+        for fold_train, fold_test in five_fold.split(self.X_train, self.y_train):
+            X_train = self.X_train[fold_train]
+            X_test  = self.X_train[fold_test]
+            y_train = self.y_train[fold_train]
+            y_test  = self.y_train[fold_test]
+
+            classifier = self.classifier.__class__(*args)
+            model = classifier.fit(X_train, y_train)
+            rate = model.score(X_test, y_test)
+
+            fold_success_rates.append(rate)
+
+        success_rate = numpy.average(fold_success_rates)
+        return (success_rate, *args)
+
     @abc.abstractmethod
     def initialize_classifier(self):
         """
