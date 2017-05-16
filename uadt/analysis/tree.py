@@ -4,7 +4,7 @@
 Tree - train and evaluate support vector machine on a given dataset.
 
 Usage:
-  tree.py <dataset> [--train=<fraction>] [--confusion] [--outfile=<path>]
+  tree.py <dataset> [--train=<fraction>] [--optimize] [--confusion] [--outfile=<path>]
 
 Options:
   --train=<fraction>  Specifies the portion of the data set that should be used for training [default: 0.7].
@@ -18,7 +18,9 @@ $ python tree.py data1000.csv --train=0.8
 
 from docopt import docopt
 from sklearn import tree
+from joblib import Parallel, delayed
 
+from uadt import config
 from uadt.analysis.model import Model
 
 
@@ -29,6 +31,19 @@ class Tree(Model):
 
     classifier_cls = tree.DecisionTreeClassifier
 
+    def optimize_paramters(self):
+        """
+        Optimizes tree depth.
+        """
+
+        max_depth_candidates = range(3, 10)
+
+        rates = Parallel(n_jobs=config.NUM_JOBS)(
+            delayed(self.test_parameters)(max_depth=depth)
+            for max_depth in max_depth_candidates
+        )
+
+        _, self.hyperparameters = max(rates, key=lambda x: x[0])
 
 def main():
     arguments = docopt(__doc__)
@@ -36,6 +51,11 @@ def main():
     machine = Tree(arguments['<dataset>'],
                    train_size=float(arguments['--train']))
     machine.prepare_data()
+
+    if arguments.get('--optimize'):
+        print("Searching for optimal parameters..")
+        machine.optimize_paramters()
+
     machine.initialize_classifier()
 
     print("Success rate: {0}".format(machine.evaluate()))
