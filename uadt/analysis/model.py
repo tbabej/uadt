@@ -117,6 +117,11 @@ class Model(object):
         processed_ids = []
 
         for v, k in sorted([(v, k) for k, v in constants.CLASSES.items()]):
+            # Skip classes that are not in the dataset
+            if v not in self.y_test:
+                continue
+
+            # Only one label per class
             if v not in processed_ids:
                 classses.append(k)
                 processed_ids.append(v)
