@@ -40,7 +40,7 @@ class Tree(Model):
 
         rates = Parallel(n_jobs=config.NUM_JOBS)(
             delayed(self.test_parameters)(max_depth=depth)
-            for max_depth in max_depth_candidates
+            for depth in max_depth_candidates
         )
 
         _, self.hyperparameters = max(rates, key=lambda x: x[0])
