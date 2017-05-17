@@ -1,13 +1,13 @@
 #!/usr/bin/python3
 
 import abc
+import joblib
 import pandas
 import numpy
 import itertools
 from matplotlib import pyplot as plt
 from sklearn import model_selection, preprocessing
 from sklearn import metrics
-from joblib import Parallel, delayed
 
 from uadt import config
 from uadt import constants
