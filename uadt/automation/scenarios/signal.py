@@ -54,9 +54,7 @@ class SignalScenario(Scenario):
             self.add_metadata('message_length', len(text))
             s.send_keys(text)
 
-            with self.mark('receive_regular_message'):
-                self.add_metadata('secondary', 'yes')  # Mark the important data stream
-                self.click('org.thoughtcrime.securesms:id/send_button')
+            self.click('org.thoughtcrime.securesms:id/send_button')
 
         # Send picture
         s = self.find('org.thoughtcrime.securesms:id/attach_button')
@@ -67,10 +65,8 @@ class SignalScenario(Scenario):
                 "/android.widget.ImageView".format(random.randint(0, 4))
             )
 
-            with self.mark('receive_image_no_caption'):
-                self.add_metadata('secondary', 'yes')
-                self.click('org.thoughtcrime.securesms:id/send_button')
-                time.sleep(3)  # Extra sleep for transfer
+            self.click('org.thoughtcrime.securesms:id/send_button')
+            time.sleep(3)  # Extra sleep for transfer
 
         # Send location
         s = self.find('org.thoughtcrime.securesms:id/attach_button')
@@ -80,10 +76,8 @@ class SignalScenario(Scenario):
             self.click('com.google.android.gms:id/select_marker_location')
             self.click('com.google.android.gms:id/confirm_button')
 
-            with self.mark('receive_location'):
-                self.add_metadata('secondary', 'yes')
-                self.click('org.thoughtcrime.securesms:id/send_button')
-                time.sleep(3)  # Extra sleep for transfer
+            self.click('org.thoughtcrime.securesms:id/send_button')
+            time.sleep(3)  # Extra sleep for transfer
 
         # Send GIF
         s = self.find('org.thoughtcrime.securesms:id/attach_button')
@@ -92,10 +86,8 @@ class SignalScenario(Scenario):
             self.click('org.thoughtcrime.securesms:id/giphy_button')
             self.click('org.thoughtcrime.securesms:id/thumbnail')
 
-            with self.mark('receive_gif'):
-                self.add_metadata('secondary', 'yes')
-                self.click('org.thoughtcrime.securesms:id/send_button')
-                time.sleep(2)  # Extra sleep for transfer
+            self.click('org.thoughtcrime.securesms:id/send_button')
+            time.sleep(2)  # Extra sleep for transfer
 
         # Press the back button (once to retract keyboard, once to go back)
         self.driver.press_keycode(4)
