@@ -36,7 +36,7 @@ class Tree(Model):
         Optimizes tree depth.
         """
 
-        max_depth_candidates = range(3, 10)
+        max_depth_candidates = range(3, 20)
 
         rates = Parallel(n_jobs=config.NUM_JOBS)(
             delayed(self.test_parameters)(max_depth=depth)
