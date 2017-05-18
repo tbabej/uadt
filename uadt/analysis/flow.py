@@ -111,11 +111,7 @@ class Flow(SizeFeatures, TimeGapFeatures, TCPFeatures, IPFeatures, SSLFeatures,
 
         # Get OS and browser from the filename
         filename = os.path.basename(self.path)
-        class_parts = filename.split('-')[0].split('_')
-        if class_parts[-1] in ('delivered', 'undelivered'):
-            class_parts = class_parts[:-1]
-
-        class_name = '_'.join(class_parts)
+        class_name = filename.split('-')[0]
         class_value = constants.CLASSES.get(class_name)
         if class_value is None:
             print("Unable to determine class value for: {}".format(class_name))
