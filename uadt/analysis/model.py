@@ -123,7 +123,7 @@ class Model(object):
 
             # Only one label per class
             if v not in processed_ids:
-                classses.append(k)
+                classes.append(k)
                 processed_ids.append(v)
 
         # Preprocess the matrix data
