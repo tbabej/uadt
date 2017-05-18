@@ -113,10 +113,13 @@ class Model(object):
         for importance, column_name in importances:
             print("{0}: {1}".format(column_name, importance))
 
-        classes = list(
-            [k for v, k in
-                sorted([(v, k) for k, v in constants.CLASSES.items()])]
-        )
+        classes = []
+        processed_ids = []
+
+        for v, k in sorted([(v, k) for k, v in constants.CLASSES.items()]):
+            if v not in processed_ids:
+                classses.append(k)
+                processed_ids.append(v)
 
         # Preprocess the matrix data
         if normalize:
