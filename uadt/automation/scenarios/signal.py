@@ -34,7 +34,7 @@ class SignalScenario(Scenario):
 
         self.user = user
         self.delivered = delivered
-        self.steps_by_random_walk(length=20)
+        self.steps_by_random_walk(length=50)
 
     def delivered_suffix(self, event_identifier):
         return event_identifier + ('_delivered' if self.delivered else '_undelivered')
@@ -74,6 +74,7 @@ class SignalScenario(Scenario):
 
         Start: conversation
         End:   conversation
+        Weight: 50
         """
 
         s = self.find('org.thoughtcrime.securesms:id/embedded_text_editor')
@@ -91,6 +92,7 @@ class SignalScenario(Scenario):
 
         Start: conversation
         End:   conversation
+        Weight: 20
         """
 
         s = self.find('org.thoughtcrime.securesms:id/attach_button')
@@ -110,6 +112,7 @@ class SignalScenario(Scenario):
 
         Start: conversation
         End:   conversation
+        Weight: 10
         """
 
         s = self.find('org.thoughtcrime.securesms:id/attach_button')
@@ -128,6 +131,7 @@ class SignalScenario(Scenario):
 
         Start: conversation
         End:   conversation
+        Weight: 10
         """
 
         s = self.find('org.thoughtcrime.securesms:id/attach_button')
@@ -145,6 +149,7 @@ class SignalScenario(Scenario):
 
         Start: conversation
         End:   main_screen
+        Weight: 0
         """
 
         # Press the back button (once to retract keyboard, once to go back)
