@@ -5,7 +5,7 @@ class Node(object):
     """
 
     def __init__(self, name):
-        self.name = node['name']
+        self.name = name
         self.transitions = []
 
     def add_transition(self, transition):
