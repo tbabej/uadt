@@ -1,3 +1,5 @@
+from numpy.random import choice
+
 
 class Node(object):
     """
@@ -15,6 +17,14 @@ class Node(object):
 
         for transition in self.transitions:
             transition.probability = transition.weight / total_weight
+
+    def random_move(self):
+        """
+        Takes a random step from this node, picking from outgoing transitions.
+        """
+
+        transition_probabilities = [t.probability for t in self.transitions]
+        return choice(self.transitions, transition_probabilities)
 
 
 class Transition(object):
@@ -64,3 +74,16 @@ class MarkovChain(object):
         # Mark the initial and final nodes
         self.initial = self.nodes[initial]
         self.final = self.nodes[final]
+
+        self.current = self.initial
+
+    def random_walk(self, length):
+        """
+        Performs a random walk on states of the markov chain. Once the length
+        of the walk is exceeded, we take the shortest path to the final node.
+        """
+
+        for step_number in range(length):
+            transition = self.current.random_move()
+            yield transition.name
+            self.current = transition.end
