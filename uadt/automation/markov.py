@@ -13,6 +13,11 @@ class Node(object):
     def add_transition(self, transition):
         self.transitions.append(transition)
 
+        # If the transition has zero probability, we are finished
+        if not transition.weight:
+            return
+
+        # Else we need to recompute the probabilities
         total_weight = float(sum([t.weight for t in self.transitions]))
 
         for transition in self.transitions:
