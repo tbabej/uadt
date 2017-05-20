@@ -218,6 +218,10 @@ class Scenario(PluginBase, metaclass=PluginMount):
         Used to wrap scenario run, performing necessary pre and post actions.
         """
 
+        # Build the markov chain. This ends up in no-op if no step methods
+        # heve been defined.
+        self._build_markov_chain()
+
         # Mark the start point and run the script
         with self.capture():
             self.run()
