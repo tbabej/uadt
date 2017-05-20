@@ -16,11 +16,13 @@ LOCAL_SUBNETS = ['10.42.', '10.43.']
 # The device names are determined using: `$ adb devices -l`, field model
 PHONES = [
     {
+        'identifier': 'Nexus',
         'platformName': 'Android',
         'platformVersion': '7.1',
         'deviceName': 'Nexus 5X'
     },
     {
+        'identifier': 'Old_Huawei',
         'platformName': 'Android',
         'platformVersion': '4.2',
         'deviceName': 'HUAWEI_Y330_U01'
