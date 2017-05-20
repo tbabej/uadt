@@ -24,7 +24,7 @@ class Node(object):
         """
 
         transition_probabilities = [t.probability for t in self.transitions]
-        return choice(self.transitions, transition_probabilities)
+        return choice(self.transitions, 1, transition_probabilities)[0]
 
 
 class Transition(object):
