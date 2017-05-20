@@ -35,7 +35,7 @@ class MarkovChain(object):
     Represents a first order markov chain.
     """
 
-    def __init__(self, transition_list):
+    def __init__(self, transition_list, initial, final):
 
         # Collect all nodes
         node_names = set()
@@ -60,3 +60,7 @@ class MarkovChain(object):
             )
 
             self.nodes[info['start_node']].add_transition(transition)
+
+        # Mark the initial and final nodes
+        self.initial = self.nodes[initial]
+        self.final = self.nodes[final]
