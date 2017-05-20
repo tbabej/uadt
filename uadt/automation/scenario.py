@@ -2,6 +2,7 @@ import datetime
 import contextlib
 import os
 import random
+import re
 import subprocess
 import shlex
 import time
@@ -115,6 +116,51 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
             # Configure generous implicit wait time (if manual action is needed)
             self.driver2.implicitly_wait(60)
+
+    def _build_markov_chain(self):
+        """
+        Inspects all the steps and builds the first order markov chain
+        representing the interaction with the application.
+        """
+
+        # Find all step methods and extract information out of them
+        step_methods_names = [
+            method_name
+            for method_name in dir(self)
+            if method_name.startswith('step_')
+        ]
+
+        step_info = [
+            _parse_step_docstring(step)
+            for step in step_methods_names
+        ]
+
+        self.chain = markov.MarkovChain(step_info)
+
+
+    def _parse_step_docstring(self, step_name):
+        """
+        Parses the docstring of the step method, obtaining all the contained
+        metadata (start and end nodes, weight, etc.)
+        """
+
+        method = getattr(self, step_name)
+        docstring = method.__doc__
+
+        STEP_METADATA_REGEX = re.compile(
+            '\s+Start:\s+(?P<start_node>\w)\s+'
+            '\s+End:\s+(?P<end_node>\w)\s+'
+            '\s+Weight:\s+(?P<weight>[\d\.]+)\s+'
+        )
+
+        match = STEP_METADATA_REGEX.search(docstring)
+
+        return {
+            'name': '_'.join(step_name.split('_')[1:]),
+            'start_node': match.group('start_node'),
+            'end_node': match.group('end_node'),
+            'weight': float(match.group('weight')),
+        }
 
     @contextlib.contextmanager
     def capture(self, timeout=5):
