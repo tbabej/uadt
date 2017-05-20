@@ -12,6 +12,9 @@ OFFLINE_USER = "Babej"
 class SignalScenario(Scenario):
     """
     A testing scenario for Signal messagenger.
+
+    Initial: main_screen
+    Final: main_screen
     """
 
     identifier = 'signal'
