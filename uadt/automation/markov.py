@@ -87,3 +87,48 @@ class MarkovChain(object):
             transition = self.current.random_move()
             yield transition.name
             self.current = transition.destination
+
+        # Make sure we end up in the finish state
+        for transition in self.get_shortest_path(self.current, self.final):
+            yield transition.name
+            self.current = transition.destination
+
+    def get_shortest_path(self, start, end):
+        """
+        Searches for the shortest path from 'start' to the 'end'. Using
+        Breath-first search algorithm is sufficient here since the distance
+        metric is the number of steps required (every edge has equal weight).
+        """
+
+        shortest_path = None
+        to_visit = []
+        visited = set()
+
+        # We start at the 'start', having walked an empty path
+        to_visit.append((start, []))
+
+        while to_visit:
+            node, path = to_visit.pop(0)
+
+            # If we got to the end, let's stop searching
+            if node == end:
+                shortest_path = path
+                break
+
+            # Else schedule all non-visited neighbours for a visit
+            to_visit.extend(
+                (t.destination, [t] + path)
+                for t in node.transitions
+                if t.destination not in visited
+            )
+
+            # Mark all neighbours as visited (so that some other vertex does
+            # not plan to go through too)
+            visited.update(set([t.destination for t in node.transitions]))
+
+        if shortest_path is None:
+            raise ValueError("Path between {0} and {1} was not found"
+                             .format(start, end))
+
+        # Otherwise we have the shortest path, let's read it out
+        yield from shortest_path
