@@ -132,7 +132,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
         ]
 
         step_info = [
-            _parse_step_docstring(step)
+            self._parse_step_docstring(step)
             for step in step_methods_names
         ]
 
