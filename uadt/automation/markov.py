@@ -86,4 +86,4 @@ class MarkovChain(object):
         for step_number in range(length):
             transition = self.current.random_move()
             yield transition.name
-            self.current = transition.end
+            self.current = transition.destination
