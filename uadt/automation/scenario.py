@@ -156,6 +156,10 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
         match = STEP_METADATA_REGEX.search(docstring)
 
+        if not match:
+            raise ValueError("The step method '{0}' does not"
+                "have properly built" "docstring".format(step_name))
+
         return {
             'name': '_'.join(step_name.split('_')[1:]),
             'start_node': match.group('start_node'),
