@@ -152,9 +152,9 @@ class Scenario(PluginBase, metaclass=PluginMount):
         docstring = method.__doc__
 
         STEP_METADATA_REGEX = re.compile(
-            '\s+Start:\s+(?P<start_node>\w+)\s+'
-            '\s+End:\s+(?P<end_node>\w+)\s+'
-            '(\s+Weight:\s+(?P<weight>[\d\.]+)\s+)?'
+            'Start:\s+(?P<start_node>\w+)\s+'
+            'End:\s+(?P<end_node>\w+)\s+'
+            '(Weight:\s+(?P<weight>[\d\.]+)\s+)?'
         )
 
         match = STEP_METADATA_REGEX.search(docstring)
@@ -167,7 +167,8 @@ class Scenario(PluginBase, metaclass=PluginMount):
             'name': '_'.join(step_name.split('_')[1:]),
             'start_node': match.group('start_node'),
             'end_node': match.group('end_node'),
-            'weight': float(match.group('weight') or 1),
+            'weight': float(match.group('weight'))
+                      if match.group('weight') is not None else 1.0,
         }
 
     def _parse_class_docstring(self):
