@@ -14,6 +14,7 @@ from uadt import config
 from uadt.plugins import PluginBase, PluginMount
 from uadt.automation.generator import DataGenerator
 from uadt.automation.driver import ImageRecognitionDriver
+from uadt.automation.markov import MarkovChain
 
 
 class Scenario(PluginBase, metaclass=PluginMount):
@@ -135,7 +136,7 @@ class Scenario(PluginBase, metaclass=PluginMount):
             for step in step_methods_names
         ]
 
-        self.chain = markov.MarkovChain(step_info)
+        self.chain = MarkovChain(step_info)
 
 
     def _parse_step_docstring(self, step_name):
