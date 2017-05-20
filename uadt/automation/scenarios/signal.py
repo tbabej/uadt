@@ -122,7 +122,7 @@ class SignalScenario(Scenario):
             self.click('org.thoughtcrime.securesms:id/send_button')
             time.sleep(3)  # Extra sleep for transfer
 
-    def step_send_location(self):
+    def step_send_gif(self):
         """
         Send the first offered GIF from GIPHY in the currently open conversation.
 
