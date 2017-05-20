@@ -149,8 +149,8 @@ class Scenario(PluginBase, metaclass=PluginMount):
         docstring = method.__doc__
 
         STEP_METADATA_REGEX = re.compile(
-            '\s+Start:\s+(?P<start_node>\w)\s+'
-            '\s+End:\s+(?P<end_node>\w)\s+'
+            '\s+Start:\s+(?P<start_node>\w+)\s+'
+            '\s+End:\s+(?P<end_node>\w+)\s+'
             '(\s+Weight:\s+(?P<weight>[\d\.]+)\s+)?'
         )
 
