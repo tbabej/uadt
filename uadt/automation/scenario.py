@@ -136,7 +136,10 @@ class Scenario(PluginBase, metaclass=PluginMount):
             for step in step_methods_names
         ]
 
-        self.chain = MarkovChain(step_info)
+        # Determine the initial and final state from the class docstring
+        initial, final = self._parse_class_docstring()
+
+        self.chain = MarkovChain(step_info, initial=initial, final=final)
 
 
     def _parse_step_docstring(self, step_name):
@@ -166,6 +169,26 @@ class Scenario(PluginBase, metaclass=PluginMount):
             'end_node': match.group('end_node'),
             'weight': float(match.group('weight') or 1),
         }
+
+    def _parse_class_docstring(self):
+        """
+        Parses the docstring of the scenario class to determine the initial and
+        final state.
+        """
+
+        docstring = self.__doc__
+
+        CLASS_METADATA_REGEX = re.compile(
+            '\s+Initial:\s+(?P<initial>\w+)\s+'
+            '\s+Final:\s+(?P<final>\w+)\s+'
+        )
+
+        match = CLASS_METADATA_REGEX.search(docstring)
+
+        if not match:
+            raise ValueError("The class docstring is not built properly.")
+
+        return match.group('initial'), match.group('final')
 
     @contextlib.contextmanager
     def capture(self, timeout=5):
