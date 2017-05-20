@@ -32,11 +32,11 @@ class SignalScenario(Scenario):
         (whether he's online or offline).
         """
 
-        # TODO: Run two random walks here, changing the offline/online user status between
-        pass
+        self.user = user
+        self.delivered = delivered
+        self.steps_by_random_walk(length=20)
 
-    @staticmethod
-    def delivered_suffix(event_identifier):
+    def delivered_suffix(self, event_identifier):
         return event_identifier + ('_delivered' if self.delivered else '_undelivered')
 
     def step_user_search(self):
@@ -53,7 +53,7 @@ class SignalScenario(Scenario):
 
         s = self.find('org.thoughtcrime.securesms:id/search_src_text')
         with self.mark('user_search'):
-            s.send_keys(user)
+            s.send_keys(self.user)
 
     def step_open_conversation(self):
         """
