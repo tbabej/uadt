@@ -190,6 +190,20 @@ class Scenario(PluginBase, metaclass=PluginMount):
 
         return match.group('initial'), match.group('final')
 
+    def steps_by_random_walk(self, length):
+        """
+        Runs the step methods as determined by the random walk over the
+        corresponding markov chain.
+        """
+
+        self.debug("Initializing random walk of length '{0}'"
+                   .format(length))
+
+        for node_name in self.chain.random_walk(length=length):
+            self.debug("Performing step: '{0}'".format(node_name))
+            method = getattr(self, 'step_' + node_name)
+            method()
+
     @contextlib.contextmanager
     def capture(self, timeout=5):
         """
