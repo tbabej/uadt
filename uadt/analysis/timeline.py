@@ -36,7 +36,7 @@ class Timeline(object):
 
         self.events = [
             {
-               'start': event['start'].
+               'start': event['start'],
                'end': event['end'],
                'name': event['name']
             }  for event in events
