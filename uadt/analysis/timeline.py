@@ -4,7 +4,7 @@
 timeline - given a session PCAP file, generate the timeline of events
 
 Usage:
-  uadt-timeline --model=<path> <session_file>
+  uadt-timeline --model=<path> <session_file>...
 """
 
 import datetime
@@ -16,6 +16,7 @@ import tempfile
 
 import editdistance
 import pandas
+import numpy
 import joblib
 from docopt import docopt
 
@@ -146,11 +147,21 @@ class TimelineExtractor(object):
 
 def main():
     arguments = docopt(__doc__)
-    session_file = arguments['<session_file>']
+    session_files = arguments['<session_file>']
     model_path = arguments['--model']
 
     extractor = TimelineExtractor(model_path)
-    print(extractor.main(session_file))
+
+    distances = joblib.Parallel(n_jobs=config.NUM_JOBS)(
+        joblib.delayed(extractor.main)(path)
+        for path in session_files
+    )
+
+    print("Distances: {0}".format(distances))
+    print("Min distance: {0}".format(numpy.min(distances)))
+    print("Max distance: {0}".format(numpy.max(distances)))
+    print("Average distance: {0}".format(numpy.mean(distances)))
+    print("Med distance: {0}".format(numpy.median(distances)))
 
 
 if __name__ == '__main__':
