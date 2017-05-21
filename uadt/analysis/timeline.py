@@ -24,6 +24,12 @@ from uadt.automation.splitter import Splitter
 from uadt.analysis.flow import Flow
 
 
+NOISE = [
+    k for k, v in constants.CLASSES.items()
+    if v == 0
+]
+
+
 class Timeline(object):
     """
     Represents a series of events.
@@ -69,8 +75,14 @@ class Timeline(object):
         Computes distance from this timeline to the other.
         """
 
-        event_sequence = [event['name'] for event in self.events]
-        other_sequence = [event['name'] for event in other.events]
+        event_sequence = [
+            event['name'] for event in self.events
+            if event['name'] not in NOISE
+        ]
+        other_sequence = [
+            event['name'] for event in other.events
+            if event['name'] not in NOISE
+        ]
 
         return editdistance.eval(event_sequence, other_sequence)
 
