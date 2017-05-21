@@ -52,7 +52,7 @@ class Timeline(object):
         return editdistance.eval(event_sequence, other_sequence)
 
 
-class Pipeline(object):
+class TimelineExtractor(object):
     # Split the session PCAP files into several events
     # Generate feature vector for each event
     # Classify feature vectors
@@ -110,8 +110,8 @@ def main():
     session_file = arguments['<session_file>']
     model_path = arguments['--model']
 
-    pipeline = Pipeline(model_path)
-    pipeline.main(session_file)
+    extractor = TimelineExtractor(model_path)
+    print(extractor.main(session_file))
 
 
 if __name__ == '__main__':
