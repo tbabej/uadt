@@ -1,4 +1,6 @@
+import datetime
 import os
+
 import pyshark
 import pandas
 import pprint
@@ -31,6 +33,12 @@ class Flow(SizeFeatures, TimeGapFeatures, TCPFeatures, IPFeatures, SSLFeatures,
         # Extract basic data from the flow
         packet_data = [self.parse_packet(p) for p in packets]
         self.data = pandas.DataFrame(packet_data)
+
+    @property
+    def interval(self):
+        start = datetime.datetime.fromtimestamp(self.data.iloc[0]['timestamp'])
+        end = datetime.datetime.fromtimestamp(self.data.iloc[-1]['timestamp'])
+        return start, end
 
     @classmethod
     def from_path(cls, path):
