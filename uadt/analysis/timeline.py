@@ -70,7 +70,7 @@ class Timeline(object):
         """
 
         event_sequence = [event['name'] for event in self.events]
-        other_sequence = [event['name'] for event in self.events]
+        other_sequence = [event['name'] for event in other.events]
 
         return editdistance.eval(event_sequence, other_sequence)
 
