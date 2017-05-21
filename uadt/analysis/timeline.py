@@ -12,6 +12,7 @@ import glob
 import tempfile
 import pprint
 
+import editdistance
 import pandas
 import joblib
 from docopt import docopt
@@ -19,6 +20,36 @@ from docopt import docopt
 from uadt import config, constants
 from uadt.automation.splitter import Splitter
 from uadt.analysis.flow import Flow
+
+
+class Timeline(object):
+    """
+    Represents a series of events.
+    """
+
+    def __init__(self, events):
+        """
+        Initialize timeline from a list of event dictionaries.
+        """
+
+        self.events = [
+            {
+               'start': event['start'].
+               'end': event['end'],
+               'name': event['name']
+            }  for event in events
+        ]
+        self.events.sort(key=lambda e: e['start'])
+
+    def distance(self, other):
+        """
+        Computes distance from this timeline to the other.
+        """
+
+        event_sequence = [event['name'] for event in self.events]
+        other_sequence = [event['name'] for event in self.events]
+
+        return editdistance.eval(event_sequence, other_sequence)
 
 
 class Pipeline(object):
