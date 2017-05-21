@@ -7,10 +7,12 @@ Usage:
   uadt-timeline --model=<path> <session_file>
 """
 
-import os
+import datetime
 import glob
-import tempfile
+import json
+import os
 import pprint
+import tempfile
 
 import editdistance
 import pandas
@@ -40,6 +42,27 @@ class Timeline(object):
             }  for event in events
         ]
         self.events.sort(key=lambda e: e['start'])
+
+    @classmethod
+    def from_marks_file(cls, path):
+        """
+        Creates a timeline out of a given marks file.
+        """
+
+        with open(path, 'r') as marks_file:
+            events = json.loads(marks_file.read())['events']
+
+        for event in events:
+            event['start'] = datetime.datetime.strptime(
+                    event['start'],
+                    constants.MARKS_TIMESTAMP
+            )
+            event['end'] = datetime.datetime.strptime(
+                    event['end'],
+                    constants.MARKS_TIMESTAMP
+            )
+
+        return cls(events)
 
     def distance(self, other):
         """
