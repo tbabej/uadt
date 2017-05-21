@@ -40,6 +40,10 @@ class Flow(SizeFeatures, TimeGapFeatures, TCPFeatures, IPFeatures, SSLFeatures,
         end = datetime.datetime.fromtimestamp(self.data.iloc[-1]['timestamp'])
         return start, end
 
+    @property
+    def empty(self):
+        return self.data.empty
+
     @classmethod
     def from_path(cls, path):
         # Parse out pcap file using pyshark
