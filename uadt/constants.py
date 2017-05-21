@@ -11,3 +11,5 @@ CLASSES = {
         'send_regular_message_undelivered': 8,
         'user_search': 0
 }
+
+MARKS_TIMESTAMP = "%Y-%m-%d %H:%M:%S.%f UTC"

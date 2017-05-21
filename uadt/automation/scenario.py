@@ -10,7 +10,7 @@ import json
 
 from selenium.common.exceptions import StaleElementReferenceException
 
-from uadt import config
+from uadt import config, constants
 from uadt.plugins import PluginBase, PluginMount
 from uadt.automation.generator import DataGenerator
 from uadt.automation.driver import ImageRecognitionDriver
@@ -325,8 +325,8 @@ class Scenario(PluginBase, metaclass=PluginMount):
         # Generate mark data
         mark_data = {
             'name': name,
-            'start': start.strftime("%Y-%m-%d %H:%M:%S.%f UTC"),
-            'end': end.strftime("%Y-%m-%d %H:%M:%S.%f UTC"),
+            'start': start.strftime(constants.MARKS_TIMESTAMP),
+            'end': end.strftime(constants.MARKS_TIMESTAMP),
             'timeout': timeout,
         }
         mark_data.update(self.metadata.pop())

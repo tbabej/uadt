@@ -27,7 +27,7 @@ import docopt
 import pyshark
 from joblib import Parallel, delayed
 
-from uadt import config
+from uadt import config, constants
 from uadt.plugins import PluginBase, PluginMount
 
 
@@ -73,11 +73,11 @@ class Splitter(PluginBase, metaclass=PluginMount):
         for event in self.metadata['events']:
             event['start'] = datetime.datetime.strptime(
                 event['start'],
-                "%Y-%m-%d %H:%M:%S.%f UTC"
+                constants.MARKS_TIMESTAMP
             )
             event['end'] = datetime.datetime.strptime(
                 event['end'],
-                "%Y-%m-%d %H:%M:%S.%f UTC"
+                constants.MARKS_TIMESTAMP
             )
 
         # Generate a separate file for each split interval
