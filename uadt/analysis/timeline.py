@@ -117,8 +117,12 @@ class TimelineExtractor(object):
 
                 predictions.append(event)
 
-        predictions.sort(key=lambda p: p['start'])
-        pprint.pprint(predictions)
+        marks_filepath = '.'.join(session_file.split('.')[:-1]) + '.marks'
+
+        predicted = Timeline(predictions)
+        ground_truth = Timeline.from_marks_file(marks_filepath)
+
+        return ground_truth.distance(predicted)
 
     def evaluate(self, X):
         """
