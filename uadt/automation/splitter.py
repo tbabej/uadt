@@ -250,7 +250,6 @@ def main():
 
     # Obtain suitable splitter
     splitter_cls = Splitter.get_plugin(method)
-    splitter = splitter_cls(output_dir)
 
     # Make sure target output dir exists
     if not os.path.isdir(output_dir):
@@ -263,6 +262,7 @@ def main():
             for path in filepaths
         )
     else:
+        splitter = splitter_cls(output_dir)
         for filepath in filepaths:
             splitter.execute(filepath)
 
