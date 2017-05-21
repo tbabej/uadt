@@ -116,6 +116,10 @@ class TimelineExtractor(object):
             for splitted_file in splitted_files:
                 flow = Flow.from_path(splitted_file)
 
+                # If the flow contains no data, let's skip
+                if flow.empty:
+                    continue
+
                 event = {
                     'start': flow.interval[0],
                     'end': flow.interval[1]
