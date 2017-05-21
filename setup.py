@@ -3,7 +3,8 @@ from setuptools import setup, find_packages
 install_requirements = [
     'pebble', 'sklearn', 'docopt', 'pandas',
     'Appium-Python-Client', 'pyshark',
-    'cached_property', 'pyudev', 'faker'
+    'cached_property', 'pyudev', 'faker',
+    'editdistance'
 ]
 
 version = '0.8.0'

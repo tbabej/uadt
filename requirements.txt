@@ -7,3 +7,4 @@ Appium-Python-Client
 cached-property
 pyudev
 faker
+editdistance
