@@ -103,6 +103,8 @@ class TimelineExtractor(object):
         self.classifier = joblib.load(model_path)
 
     def main(self, session_file):
+        print("Extracting timeline from: {0}".format(session_file))
+
         # Generate temporary output dir to store the splitted PCAPs
         predictions = []
 
