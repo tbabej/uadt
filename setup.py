@@ -28,6 +28,7 @@ setup(
             'uadt-usb-reset = uadt.automation.usbreset:main',
             'uadt-splitter = uadt.automation.splitter:main',
             'uadt-dataset = uadt.analysis.dataset:main',
+            'uadt-timeline = uadt.analysis.timeline:main',
             'uadt-live = uadt.analysis.live:main',
             'uadt-model-svm = uadt.analysis.svm:main',
             'uadt-model-tree = uadt.analysis.tree:main',
