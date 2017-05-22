@@ -105,9 +105,16 @@ class TimelineExtractor(object):
     def main(self, session_file):
         print("Extracting timeline from: {0}".format(session_file))
 
-        # Generate temporary output dir to store the splitted PCAPs
         predictions = []
 
+        # First check if the marks file is available
+        try:
+            marks_filepath = '.'.join(session_file.split('.')[:-1]) + '.marks'
+            ground_truth = Timeline.from_marks_file(marks_filepath)
+        except FileNotFoundError:
+            return None
+
+        # Generate temporary output dir to store the splitted PCAPs
         with tempfile.TemporaryDirectory() as temp_output_dir:
             splitter = Splitter.get_plugin('auto')(temp_output_dir)
             splitter.execute(session_file)
@@ -136,10 +143,8 @@ class TimelineExtractor(object):
 
                 predictions.append(event)
 
-        marks_filepath = '.'.join(session_file.split('.')[:-1]) + '.marks'
 
         predicted = Timeline(predictions)
-        ground_truth = Timeline.from_marks_file(marks_filepath)
 
         return ground_truth.distance(predicted)
 
@@ -162,6 +167,9 @@ def main():
         joblib.delayed(extractor.main)(path)
         for path in session_files
     )
+
+    # Filter out unsuccessful computations
+    distances = [d for d in distances if d is not None]
 
     print("Distances: {0}".format(distances))
     print("Min distance: {0}".format(numpy.min(distances)))
