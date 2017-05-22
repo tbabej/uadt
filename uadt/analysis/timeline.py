@@ -4,7 +4,10 @@
 timeline - given a session PCAP file, generate the timeline of events
 
 Usage:
-  uadt-timeline --model=<path> <session_file>...
+  uadt-timeline --model=<path> [--threshold=<value>] <session_file>...
+
+Options:
+  --threshold=<value>  The edit distance above which timeline should notify about the session [default: 0.5].
 """
 
 import datetime
@@ -49,6 +52,9 @@ class Timeline(object):
             }  for event in events
         ]
         self.events.sort(key=lambda e: e['start'])
+
+    def __len__(self):
+        return len(self.events)
 
     @classmethod
     def from_marks_file(cls, path):
@@ -95,12 +101,13 @@ class TimelineExtractor(object):
     # Output timeline
     # Compute distance metric
 
-    def __init__(self, model_path):
+    def __init__(self, model_path, threshold):
         """
         Intialize the pipeline.
         """
 
         self.classifier = joblib.load(model_path)
+        self.threshold = threshold
 
     def main(self, session_file):
         print("Extracting timeline from: {0}".format(session_file))
@@ -146,7 +153,14 @@ class TimelineExtractor(object):
 
         predicted = Timeline(predictions)
 
-        return ground_truth.distance(predicted)
+        distance = ground_truth.distance(predicted)
+        if distance > self.threshold * len(ground_truth):
+            print("Warning: {2}: Distance from ground truth above "
+                    "threshold (distance {0}, threshold {1:2})"
+                  .format(distance, self.threshold * len(ground_truth),
+                          session_file))
+
+        return distance
 
     def evaluate(self, X):
         """
@@ -159,9 +173,10 @@ class TimelineExtractor(object):
 def main():
     arguments = docopt(__doc__)
     session_files = arguments['<session_file>']
+    threshold = float(arguments['--threshold'])
     model_path = arguments['--model']
 
-    extractor = TimelineExtractor(model_path)
+    extractor = TimelineExtractor(model_path, threshold)
 
     distances = joblib.Parallel(n_jobs=config.NUM_JOBS)(
         joblib.delayed(extractor.main)(path)
