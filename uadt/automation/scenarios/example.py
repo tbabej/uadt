@@ -1,5 +1,3 @@
-from appium import webdriver
-
 from uadt.automation.scenario import Scenario
 
 
