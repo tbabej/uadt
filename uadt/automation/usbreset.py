@@ -24,7 +24,7 @@ def main():
             fcntl.ioctl(f, USBDEVFS_RESET_CODE, 0)
         print("Successfully reset device.")
     except (Exception, IOError):
-        print("Could not reset the dvice")
+        print("Could not reset the device")
 
 if __name__ == '__main__':
     main()
