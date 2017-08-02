@@ -60,9 +60,12 @@ class Theater(LoggerMixin):
 
         names = names or []
 
-        if self.devices > 1 and len(names) <= 1:
-            raise ValueError("Selected scenario requires two devices, "
-                             "in such case you need to specify both.")
+        if len(names) < self.required_devices:
+            raise ValueError(
+                "Selected scenario requires multiple devices ({required}), "
+                "you only specified {specified}."
+                .format(required=self.required_devices, specified=len(names))
+            )
 
         selected = []
 
@@ -338,7 +341,7 @@ class Theater(LoggerMixin):
         if scenario_cls is None:
             sys.exit(1)
 
-        self.devices = 2 if scenario_cls.dual_phone else 1
+        self.devices = scenario_cls.devices
         self.phones = self.select_phones(
             arguments['--phone'],
         )

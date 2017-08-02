@@ -26,7 +26,8 @@ class Scenario(PluginBase, metaclass=PluginMount):
     no_reset = True
     automation_name = "uiautomator2"
 
-    dual_phone = False
+    # Override to specify that multiple devices are required for this scenario
+    devices = 1
 
     def __init__(self, appium_ports, phones):
         """
@@ -92,31 +93,29 @@ class Scenario(PluginBase, metaclass=PluginMount):
             'automationName': self.automation_name
         }
 
-        capabilities = generic_capabilities.copy()
-        capabilities.update(self.phones[0])
+        for index, phone in enumerate(self.phones):
+             capabilities = generic_capabilities.copy()
+             capabilities.update(phone)
 
-        self.debug("Initializing appium interface")
+             self.debug("Initializing appium interface (phone {})".format(index))
 
-        self.driver = ImageRecognitionDriver(
-            'http://localhost:{0}/wd/hub'.format(appium_ports[0]),
-            capabilities
-        )
+             driver = ImageRecognitionDriver(
+                 'http://localhost:{0}/wd/hub'.format(appium_ports[index]),
+                 capabilities
+             )
 
-        # Configure generous implicit wait time (if manual action is needed)
-        self.driver.implicitly_wait(60)
+             # Configure generous implicit wait time (if manual action is needed)
+             driver.implicitly_wait(60)
 
-        if self.dual_phone:
-            capabilities = generic_capabilities.copy()
-            capabilities.update(self.phones[1])
-
-            self.debug("Initializing second appium interface")
-            self.driver2 = ImageRecognitionDriver(
-                'http://localhost:{0}/wd/hub'.format(appium_ports[1]),
-                capabilities
-            )
-
-            # Configure generous implicit wait time (if manual action is needed)
-            self.driver2.implicitly_wait(60)
+             # Set the driver attribute for this phone
+             # Name convention: 1st phone - self.driver
+             #                  2nd phone - self.driver2
+             #                  ith phone - self.driveri
+             setattr(
+                 self,
+                 'driver' if index == 0 else 'driver{}'.format(index+1),
+                 driver
+             )
 
     def _build_markov_chain(self):
         """
