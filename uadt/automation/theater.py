@@ -60,6 +60,13 @@ class Theater(LoggerMixin):
 
         names = names or []
 
+        # Check that no device is used twice
+        if len(names) != len(set(names)):
+            raise ValueError("The list of selected devices contains "
+                             "duplicates.")
+
+
+        # Check that the number of required devices is specified
         if len(names) < self.required_devices:
             raise ValueError(
                 "Selected scenario requires multiple devices ({required}), "
