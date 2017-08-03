@@ -27,7 +27,7 @@ setup(
         'console_scripts': [
             'uadt-theater = uadt.automation.theater:main',
             'uadt-usb-reset = uadt.automation.usbreset:main',
-            'uadt-splitter = uadt.automation.splitter:main',
+            'uadt-splitter = uadt.analysis.splitter:main',
             'uadt-dataset = uadt.analysis.dataset:main',
             'uadt-timeline = uadt.analysis.timeline:main',
             'uadt-live = uadt.analysis.live:main',

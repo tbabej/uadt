@@ -24,7 +24,7 @@ import joblib
 from docopt import docopt
 
 from uadt import config, constants
-from uadt.automation.splitter import Splitter
+from uadt.analysis.splitter import Splitter
 from uadt.analysis.flow import Flow
 
 
