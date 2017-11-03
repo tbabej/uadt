@@ -152,7 +152,7 @@ class MarkSplitter(Splitter):
 
     identifier = 'marks'
 
-    def split_intervals(self, pcap_filename):
+    def split_intervals(self, *args, **kwargs):
         # Process each event separately
         for event in self.metadata['events']:
             query = 'frame.time >= "{0}" and frame.time <= "{1}"'.format(
