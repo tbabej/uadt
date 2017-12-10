@@ -17,7 +17,7 @@ class Model(object):
     scale_data = False
     classifier_cls = None
 
-    def __init__(self, path, train_size):
+    def __init__(self, path, train_size, hyperparameters=None):
         """
         Initialize model giving it the dataset at path to crunch.
         """
@@ -26,7 +26,7 @@ class Model(object):
         self.train_size = train_size
 
         # Set empty hyperparameters initially (some models do not have any)
-        self.hyperparameters = {}
+        self.hyperparameters = (hyperparameters or {}).copy()
 
     def prepare_data(self):
         """
