@@ -62,8 +62,10 @@ def main():
         print("Searching for optimal parameters..")
         machine.optimize_paramters()
     elif arguments.get('-C') and arguments.get('--gamma'):
-        machine.C = float(arguments.get('-C'))
-        machine.gamma = float(arguments.get('--gamma'))
+        machine.hyperparameters = {
+            'C': float(arguments.get('-C')),
+            'gamma': float(arguments.get('--gamma'))
+        }
 
     machine.initialize_classifier()
 
