@@ -1,8 +1,3 @@
-Diplomka
---------
-
-This project (so far) tries to replicate the results obtained in the attached paper (paper.pdf).
-
 Usage
 -----
 
